@@ -1,0 +1,14 @@
+<div key={character.id} className={index === 0 ? 'col-xs-6 col-sm-6 col-md-5 col-md-offset-1' : 'col-xs-6 col-sm-6 col-md-5'}>
+          <div className='thumbnail fadeInUp animated'>
+            <img onClick={this.handleClick.bind(this, character.id)} src={'http://ddragon.leagueoflegends.com/cdn/img/champion/splash/' + character.image.full }/>
+            <div className='caption text-center'>
+              <ul className='list-inline'>
+                <li><strong>Race:</strong> {character.title}</li>
+                <li><strong>Bloodline:</strong> {character.group}</li>
+              </ul>
+              <h4>
+                <Link to={'/characters/' + character.characterId}><strong>{character.name}</strong></Link>
+              </h4>
+            </div>
+          </div>
+        </div>
