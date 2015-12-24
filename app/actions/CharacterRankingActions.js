@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-class CharacterListActions {
+class CharacterRankingActions {
   constructor() {
     this.generateActions(
       'getCharactersSuccess',
@@ -15,9 +15,6 @@ class CharacterListActions {
       bloodline: payload.bloodline
     };
 
-    if(payload.category.toLowerCase()==='all'){
-      url='/api/characters'
-    }
     if (payload.category === 'female') {
       params.gender = 'female';
     } else if (payload.category === 'male') {
@@ -38,4 +35,4 @@ class CharacterListActions {
   }
 }
 
-export default alt.createActions(CharacterListActions);
+export default alt.createActions(CharacterRankingActions);

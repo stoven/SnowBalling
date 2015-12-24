@@ -153,6 +153,9 @@ var CharacterListActions = (function () {
         bloodline: payload.bloodline
       };
 
+      if (payload.category.toLowerCase() === 'all') {
+        url = '/api/characters';
+      }
       if (payload.category === 'female') {
         params.gender = 'female';
       } else if (payload.category === 'male') {
@@ -239,7 +242,7 @@ var HomeActions = (function () {
   function HomeActions() {
     _classCallCheck(this, HomeActions);
 
-    this.generateActions('getCharactersSuccess', 'getCharactersFail', 'voteFail');
+    this.generateActions('getCharactersSuccess', 'getCharactersFail', 'updateSearchQuery', 'voteFail');
   }
 
   _createClass(HomeActions, [{
@@ -848,89 +851,94 @@ var CharacterList = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var charactersList = this.state.characters.map(function (character, index) {
-        return _react2.default.createElement(
+      var characterNodes = [];
+      {/* ranking styles
+        var counter=0;
+        for(var x in this.state.characters){
+         counter++;
+         if(counter>5){
+           break;
+         }
+         let character=this.state.characters[x];
+         characterNodes.push(
+           <div key={character.id} className='list-group-item animated fadeIn'>
+             <div className='media'>
+               <span className='position pull-left'>{counter + 1}</span>
+               <div className='pull-left thumb-lg'>
+                 <Link to={'/characters/' + character.name}>
+                   <img className='campionImage' src={'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }/>
+                 </Link>
+               </div>
+               <div className='media-body'>
+                 <h4 className='media-heading'>
+                   <Link to={'/characters/' + character.name}>{character.name}</Link>
+                 </h4>
+                 <small><strong>{character.title}</strong></small>
+                 <br />
+                 <small>Bloodline: <strong>{character.bloodline}</strong></small>
+                 <br />
+                 <small>Wins: <strong>{character.wins}</strong> Losses: <strong>{character.losses}</strong></small>
+               </div>
+             </div>
+           </div>
+           );
+        }*/}
+      for (var x in this.state.characters) {
+        var character = this.state.characters[x];
+        characterNodes.push(_react2.default.createElement(
           'div',
-          { key: character.characterId, className: 'list-group-item animated fadeIn' },
+          { key: character.id, className: 'col-xs-6 col-sm-6 col-md-2 champion' },
           _react2.default.createElement(
             'div',
-            { className: 'media' },
+            { className: 'thumbnail fadeInUp animated' },
             _react2.default.createElement(
-              'span',
-              { className: 'position pull-left' },
-              index + 1
+              _reactRouter.Link,
+              { to: '/champion/' + character.name },
+              _react2.default.createElement('img', { className: 'campionImage' /*onClick={this.handleClick.bind(this, character.id)} */, src: 'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full })
             ),
             _react2.default.createElement(
               'div',
-              { className: 'pull-left thumb-lg' },
+              { className: 'caption text-center' },
               _react2.default.createElement(
-                _reactRouter.Link,
-                { to: '/characters/' + character.characterId },
-                _react2.default.createElement('img', { className: 'media-object', src: 'http://image.eveonline.com/Character/' + character.characterId + '_128.jpg' })
-              )
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'media-body' },
+                'ul',
+                { className: 'list-inline' },
+                _react2.default.createElement(
+                  'li',
+                  { className: 'characterTitle' },
+                  ' ',
+                  character.title
+                )
+              ),
               _react2.default.createElement(
                 'h4',
-                { className: 'media-heading' },
+                null,
                 _react2.default.createElement(
                   _reactRouter.Link,
-                  { to: '/characters/' + character.characterId },
-                  character.name
-                )
-              ),
-              _react2.default.createElement(
-                'small',
-                null,
-                'Race: ',
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  character.race
-                )
-              ),
-              _react2.default.createElement('br', null),
-              _react2.default.createElement(
-                'small',
-                null,
-                'Bloodline: ',
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  character.bloodline
-                )
-              ),
-              _react2.default.createElement('br', null),
-              _react2.default.createElement(
-                'small',
-                null,
-                'Wins: ',
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  character.wins
-                ),
-                ' Losses: ',
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  character.losses
+                  { to: '/champion/' + character.name },
+                  _react2.default.createElement(
+                    'strong',
+                    null,
+                    character.name
+                  )
                 )
               )
             )
           )
-        );
-      });
+        ));
+      }
 
       return _react2.default.createElement(
         'div',
         { className: 'container' },
         _react2.default.createElement(
+          'h3',
+          { className: 'text-center' },
+          'View Champions'
+        ),
+        _react2.default.createElement(
           'div',
           { className: 'list-group' },
-          charactersList
+          characterNodes
         )
       );
     }
@@ -1133,7 +1141,7 @@ var Home = (function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       _HomeStore2.default.listen(this.onChange);
-      _HomeActions2.default.getCharacters();
+      //HomeActions.getCharacters();
     }
   }, {
     key: 'componentWillUnmount',
@@ -1148,57 +1156,33 @@ var Home = (function (_React$Component) {
   }, {
     key: 'handleClick',
     value: function handleClick(character) {
-      var winner = character.id;
-      var loser = (0, _underscore.first)((0, _underscore.without)(this.state.characters, (0, _underscore.findWhere)(this.state.characters, { id: winner }))).id;
-      _HomeActions2.default.vote(winner, loser);
+      // var winner = character.id;
+      // var loser = first(without(this.state.characters, findWhere(this.state.characters, { id: winner }))).id;
+      // HomeActions.vote(winner, loser);
+    }
+  }, {
+    key: 'onChange',
+    value: function onChange(state) {
+      this.setState(state);
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(event) {
+      event.preventDefault();
+
+      var searchQuery = this.state.searchQuery.trim();
+
+      if (searchQuery) {
+        NavbarActions.findCharacter({
+          searchQuery: searchQuery,
+          searchForm: this.refs.searchForm,
+          history: this.props.history
+        });
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var characterNodes = [];
-      for (var x in this.state.characters) {
-        var character = this.state.characters[x];
-        characterNodes.push(_react2.default.createElement(
-          'div',
-          { key: character.id, className: 'col-xs-6 col-sm-6 col-md-2 champion' },
-          _react2.default.createElement(
-            'div',
-            { className: 'thumbnail fadeInUp animated' },
-            _react2.default.createElement(
-              _reactRouter.Link,
-              { to: '/champion/' + character.name },
-              _react2.default.createElement('img', { className: 'campionImage' /*onClick={this.handleClick.bind(this, character.id)} */, src: 'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'caption text-center' },
-              _react2.default.createElement(
-                'ul',
-                { className: 'list-inline' },
-                _react2.default.createElement(
-                  'li',
-                  { className: 'characterTitle' },
-                  ' ',
-                  character.title
-                )
-              ),
-              _react2.default.createElement(
-                'h4',
-                null,
-                _react2.default.createElement(
-                  _reactRouter.Link,
-                  { to: '/champion/' + character.name },
-                  _react2.default.createElement(
-                    'strong',
-                    null,
-                    character.name
-                  )
-                )
-              )
-            )
-          )
-        ));
-      }
 
       return _react2.default.createElement(
         'div',
@@ -1206,12 +1190,25 @@ var Home = (function (_React$Component) {
         _react2.default.createElement(
           'h3',
           { className: 'text-center' },
-          'View Champions'
+          'Search Summoner:'
         ),
         _react2.default.createElement(
-          'div',
-          { className: 'row' },
-          characterNodes
+          'form',
+          { ref: 'searchForm', className: 'navbar-form navbar-left animated', onSubmit: this.handleSubmit.bind(this) },
+          _react2.default.createElement(
+            'div',
+            { className: 'input-group' },
+            _react2.default.createElement('input', { id: 'inputSearchChampions', type: 'text', className: 'form-control', placeholder: 'Summoner\'s Name', value: this.state.searchQuery, onChange: _HomeActions2.default.updateSearchQuery }),
+            _react2.default.createElement(
+              'span',
+              { className: 'input-group-btn' },
+              _react2.default.createElement(
+                'button',
+                { className: 'btn btn-default', onClick: this.handleSubmit.bind(this) },
+                _react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
+              )
+            )
+          )
         )
       );
     }
@@ -1404,7 +1401,7 @@ var Navbar = (function (_React$Component2) {
             _react2.default.createElement(
               'div',
               { className: 'input-group' },
-              _react2.default.createElement('input', { id: 'inputSearchChampions', type: 'text', className: 'form-control', placeholder: this.state.totalCharacters + ' characters', value: this.state.searchQuery, onChange: _NavbarActions2.default.updateSearchQuery }),
+              _react2.default.createElement('input', { id: 'inputSearchChampions', type: 'text', className: 'form-control', placeholder: this.state.totalCharacters + ' champions', value: this.state.searchQuery, onChange: _NavbarActions2.default.updateSearchQuery }),
               _react2.default.createElement(
                 'span',
                 { className: 'input-group-btn' },
@@ -1527,7 +1524,7 @@ var Navbar = (function (_React$Component2) {
                   null,
                   _react2.default.createElement(
                     _reactRouter.Link,
-                    { to: '/female' },
+                    { to: '/All' },
                     'All'
                   )
                 ),
@@ -2283,6 +2280,7 @@ var HomeStore = (function () {
 
     this.bindActions(_HomeActions2.default);
     this.characters = [];
+    this.searchQuery = '';
   }
 
   _createClass(HomeStore, [{
@@ -2299,6 +2297,11 @@ var HomeStore = (function () {
     key: 'onVoteFail',
     value: function onVoteFail(errorMessage) {
       toastr.error(errorMessage);
+    }
+  }, {
+    key: 'onUpdateSearchQuery',
+    value: function onUpdateSearchQuery(event) {
+      this.searchQuery = event.target.value;
     }
   }]);
 
@@ -2342,7 +2345,7 @@ var NavbarStore = (function () {
   _createClass(NavbarStore, [{
     key: 'onFindCharacterSuccess',
     value: function onFindCharacterSuccess(payload) {
-      payload.history.pushState(null, '/characters/' + payload.id);
+      payload.history.pushState(null, '/champion/' + payload.name);
     }
   }, {
     key: 'onFindCharacterFail',

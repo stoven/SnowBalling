@@ -11,7 +11,7 @@ class NavbarStore {
   }
 
   onFindCharacterSuccess(payload) {
-    payload.history.pushState(null, '/characters/' + payload.id);
+    payload.history.pushState(null, '/champion/' + payload.name);
   }
 
   onFindCharacterFail(payload) {

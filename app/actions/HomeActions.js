@@ -5,6 +5,7 @@ class HomeActions {
     this.generateActions(
       'getCharactersSuccess',
       'getCharactersFail',
+      'updateSearchQuery',
       'voteFail'
     );
   }

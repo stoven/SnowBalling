@@ -31,21 +31,29 @@ class CharacterList extends React.Component {
   }
 
   render() {
-    let charactersList = this.state.characters.map((character, index) => {
-      return (
-        <div key={character.characterId} className='list-group-item animated fadeIn'>
+    var characterNodes =[];
+    {/* ranking styles
+    var counter=0;
+    for(var x in this.state.characters){
+      counter++;
+      if(counter>5){
+        break;
+      }
+      let character=this.state.characters[x];
+      characterNodes.push(
+        <div key={character.id} className='list-group-item animated fadeIn'>
           <div className='media'>
-            <span className='position pull-left'>{index + 1}</span>
+            <span className='position pull-left'>{counter + 1}</span>
             <div className='pull-left thumb-lg'>
-              <Link to={'/characters/' + character.characterId}>
-                <img className='media-object' src={'http://image.eveonline.com/Character/' + character.characterId + '_128.jpg'} />
+              <Link to={'/characters/' + character.name}>
+                <img className='campionImage' src={'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }/>
               </Link>
             </div>
             <div className='media-body'>
               <h4 className='media-heading'>
-                <Link to={'/characters/' + character.characterId}>{character.name}</Link>
+                <Link to={'/characters/' + character.name}>{character.name}</Link>
               </h4>
-              <small>Race: <strong>{character.race}</strong></small>
+              <small><strong>{character.title}</strong></small>
               <br />
               <small>Bloodline: <strong>{character.bloodline}</strong></small>
               <br />
@@ -53,13 +61,32 @@ class CharacterList extends React.Component {
             </div>
           </div>
         </div>
-      );
-    });
+        );
+    }*/}
+    for(var x in this.state.characters){
+      let character=this.state.characters[x];
+      characterNodes.push(
+        <div key={character.id} className='col-xs-6 col-sm-6 col-md-2 champion'>
+          <div className='thumbnail fadeInUp animated'>
+            <Link to={'/champion/' + character.name}><img className='campionImage' /*onClick={this.handleClick.bind(this, character.id)} */src={'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }/></Link>
+            <div className='caption text-center'>
+              <ul className='list-inline'>
+                <li className='characterTitle'> {character.title}</li>
+              </ul>
+              <h4>
+                <Link to={'/champion/' + character.name}><strong>{character.name}</strong></Link>
+              </h4>
+            </div>
+          </div>
+        </div>
+        );
+    }
 
     return (
       <div className='container'>
+      <h3 className='text-center'>View Champions</h3>
         <div className='list-group'>
-          {charactersList}
+          {characterNodes}
         </div>
       </div>
     );

@@ -5,6 +5,7 @@ class HomeStore {
   constructor() {
     this.bindActions(HomeActions);
     this.characters = [];
+    this.searchQuery = '';
   }
 
   onGetCharactersSuccess(data) {
@@ -17,6 +18,10 @@ class HomeStore {
 
   onVoteFail(errorMessage) {
     toastr.error(errorMessage);
+  }
+
+  onUpdateSearchQuery(event) {
+    this.searchQuery = event.target.value;
   }
 }
 
