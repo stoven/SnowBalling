@@ -70,14 +70,31 @@ var CharacterActions = (function () {
 
   _createClass(CharacterActions, [{
     key: 'getCharacter',
-    value: function getCharacter(characterId) {
+    value: function getCharacter(characterName) {
       var _this = this;
 
-      $.ajax({ url: '/api/characters/' + characterId }).done(function (data) {
-        _this.actions.getCharacterSuccess(data);
-      }).fail(function (jqXhr) {
-        _this.actions.getCharacterFail(jqXhr);
-      });
+      var localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+      var characterId = 0;
+      if (localData[characterName] != null) {
+        characterId = localData[characterName].id;
+        $.ajax({ url: '/api/characters/' + characterId }).done(function (data) {
+          _this.actions.getCharacterSuccess(data);
+        }).fail(function (jqXhr) {
+          _this.actions.getCharacterFail(jqXhr);
+        });
+      } else {
+        $.ajax({ url: '/api/characters' }).done(function (data) {
+          localStorage.setItem('LOLChampions', JSON.stringify(data));
+          characterId = localData[characterName].id;
+          $.ajax({ url: '/api/characters/' + characterId }).done(function (data) {
+            _this.actions.getCharacterSuccess(data);
+          }).fail(function (jqXhr) {
+            _this.actions.getCharacterFail(jqXhr);
+          });
+        }).fail(function (jqXhr) {
+          _this.actions.getCharacterFail(jqXhr);
+        });
+      }
     }
   }, {
     key: 'report',
@@ -222,19 +239,25 @@ var HomeActions = (function () {
   function HomeActions() {
     _classCallCheck(this, HomeActions);
 
-    this.generateActions('getTwoCharactersSuccess', 'getTwoCharactersFail', 'voteFail');
+    this.generateActions('getCharactersSuccess', 'getCharactersFail', 'voteFail');
   }
 
   _createClass(HomeActions, [{
-    key: 'getTwoCharacters',
-    value: function getTwoCharacters() {
+    key: 'getCharacters',
+    value: function getCharacters() {
       var _this = this;
 
-      $.ajax({ url: '/api/characters' }).done(function (data) {
-        _this.actions.getTwoCharactersSuccess(data);
-      }).fail(function (jqXhr) {
-        _this.actions.getTwoCharactersFail(jqXhr.responseJSON.message);
-      });
+      var localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+      if (!Object.keys(localData).length == 0) {
+        $.ajax({ url: '/api/characters' }).done(function (data) {
+          localStorage.setItem('LOLChampions', JSON.stringify(data));
+          _this.actions.getCharactersSuccess(data);
+        }).fail(function (jqXhr) {
+          _this.actions.getCharactersFail(jqXhr.responseJSON.message);
+        });
+      } else {
+        this.actions.getCharactersSuccess(localData);
+      }
     }
   }, {
     key: 'vote',
@@ -281,7 +304,7 @@ var NavbarActions = (function () {
   function NavbarActions() {
     _classCallCheck(this, NavbarActions);
 
-    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getCharacterCountSuccess', 'getCharacterCountFail', 'findCharacterSuccess', 'findCharacterFail');
+    this.generateActions('updateOnlineUsers', 'updateAjaxAnimation', 'updateSearchQuery', 'getChampionCountAndNamesSuccess', 'getChampionCountAndNamesFail', 'findCharacterSuccess', 'findCharacterFail');
   }
 
   _createClass(NavbarActions, [{
@@ -293,22 +316,39 @@ var NavbarActions = (function () {
         url: '/api/characters/search',
         data: { name: payload.searchQuery }
       }).done(function (data) {
-        (0, _underscore.assign)(payload, data);
-        _this.actions.findCharacterSuccess(payload);
+        var hit = 0;
+        var hitArray = [];
+        $.each(Object.keys(data), function (index, value) {
+          if (value.toLowerCase().indexOf(payload.searchQuery) != -1) {
+            hit++;
+            hitArray.push(value);
+          }
+        });
+        if (hit == 1) {
+          (0, _underscore.assign)(payload, data[hitArray[0]]);
+          _this.actions.findCharacterSuccess(payload);
+        }
       }).fail(function () {
         _this.actions.findCharacterFail(payload);
       });
     }
   }, {
-    key: 'getCharacterCount',
-    value: function getCharacterCount() {
+    key: 'getChampionCountAndNames',
+    value: function getChampionCountAndNames() {
       var _this2 = this;
 
-      $.ajax({ url: '/api/characters/count' }).done(function (data) {
-        _this2.actions.getCharacterCountSuccess(data);
-      }).fail(function (jqXhr) {
-        _this2.actions.getCharacterCountFail(jqXhr);
-      });
+      var localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+      if (!!Object.keys(localData).length == 0) {
+        //$.ajax({ url: '/api/characters/count' })
+        $.ajax({ url: '/api/characters' }).done(function (data) {
+          _this2.actions.getChampionCountAndNamesSuccess(Object.keys(data));
+          localStorage.setItem('LOLChampions', JSON.stringify(data));
+        }).fail(function (jqXhr) {
+          _this2.actions.getChampionCountAndNamesFail(jqXhr);
+        });
+      } else {
+        this.actions.getChampionCountAndNamesSuccess(Object.keys(localData));
+      }
     }
   }]);
 
@@ -653,6 +693,9 @@ var Character = (function (_React$Component) {
           duration: 300
         }
       });
+      $("#showAllLore").click(function () {
+        $('.lore.rest').toggle();
+      });
     }
   }, {
     key: 'componentWillUnmount',
@@ -676,6 +719,13 @@ var Character = (function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
+      var firstParagraph = undefined,
+          restParagraph = '';
+      //firstParagraph = ;//.substring(0,this.state.lore.indexOf('br'));
+      if (this.state.lore) {
+        firstParagraph = this.state.lore.substring(0, this.state.lore.indexOf('<br'));
+        restParagraph = this.state.lore.substring(this.state.lore.indexOf('<br'));
+      }
       return _react2.default.createElement(
         'div',
         { className: 'container' },
@@ -684,8 +734,8 @@ var Character = (function (_React$Component) {
           { className: 'profile-img' },
           _react2.default.createElement(
             'a',
-            { className: 'magnific-popup', href: 'https://image.eveonline.com/Character/' + this.state.characterId + '_1024.jpg' },
-            _react2.default.createElement('img', { src: 'https://image.eveonline.com/Character/' + this.state.characterId + '_256.jpg' })
+            { className: 'magnific-popup', href: 'http://ddragon.leagueoflegends.com/cdn/img/champion/loading/' + this.state.name + '_0.jpg' },
+            _react2.default.createElement('img', { className: 'profile-img-src', src: 'http://ddragon.leagueoflegends.com/cdn/img/champion/loading/' + this.state.name + '_0.jpg' })
           )
         ),
         _react2.default.createElement(
@@ -703,77 +753,18 @@ var Character = (function (_React$Component) {
           _react2.default.createElement(
             'h4',
             { className: 'lead' },
-            'Race: ',
             _react2.default.createElement(
               'strong',
               null,
-              this.state.race
+              this.state.title
             )
           ),
+          _react2.default.createElement('div', { className: 'lore first', dangerouslySetInnerHTML: { __html: firstParagraph } }),
+          _react2.default.createElement('div', { className: 'lore rest', dangerouslySetInnerHTML: { __html: restParagraph } }),
           _react2.default.createElement(
-            'h4',
-            { className: 'lead' },
-            'Bloodline: ',
-            _react2.default.createElement(
-              'strong',
-              null,
-              this.state.bloodline
-            )
-          ),
-          _react2.default.createElement(
-            'h4',
-            { className: 'lead' },
-            'Gender: ',
-            _react2.default.createElement(
-              'strong',
-              null,
-              this.state.gender
-            )
-          ),
-          _react2.default.createElement(
-            'button',
-            { className: 'btn btn-transparent',
-              onClick: _CharacterActions2.default.report.bind(this, this.state.characterId),
-              disabled: this.state.isReported },
-            this.state.isReported ? 'Reported' : 'Report Character'
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: 'profile-stats clearfix' },
-          _react2.default.createElement(
-            'ul',
-            null,
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                'span',
-                { className: 'stats-number' },
-                this.state.winLossRatio
-              ),
-              'Winning Percentage'
-            ),
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                'span',
-                { className: 'stats-number' },
-                this.state.wins
-              ),
-              ' Wins'
-            ),
-            _react2.default.createElement(
-              'li',
-              null,
-              _react2.default.createElement(
-                'span',
-                { className: 'stats-number' },
-                this.state.losses
-              ),
-              ' Losses'
-            )
+            'a',
+            { id: 'showAllLore' },
+            'Show All'
           )
         )
       );
@@ -1070,7 +1061,7 @@ var Footer = (function (_React$Component) {
                 'You may view the ',
                 _react2.default.createElement(
                   'a',
-                  { href: 'https://github.com/sahat/newedenfaces-react' },
+                  { href: 'https://github.com/stoven/SnowBalling' },
                   'Source Code'
                 ),
                 ' behind this project on GitHub.'
@@ -1142,7 +1133,7 @@ var Home = (function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       _HomeStore2.default.listen(this.onChange);
-      _HomeActions2.default.getTwoCharacters();
+      _HomeActions2.default.getCharacters();
     }
   }, {
     key: 'componentWillUnmount',
@@ -1157,8 +1148,8 @@ var Home = (function (_React$Component) {
   }, {
     key: 'handleClick',
     value: function handleClick(character) {
-      var winner = character.characterId;
-      var loser = (0, _underscore.first)((0, _underscore.without)(this.state.characters, (0, _underscore.findWhere)(this.state.characters, { characterId: winner }))).characterId;
+      var winner = character.id;
+      var loser = (0, _underscore.first)((0, _underscore.without)(this.state.characters, (0, _underscore.findWhere)(this.state.characters, { id: winner }))).id;
       _HomeActions2.default.vote(winner, loser);
     }
   }, {
@@ -1173,7 +1164,11 @@ var Home = (function (_React$Component) {
           _react2.default.createElement(
             'div',
             { className: 'thumbnail fadeInUp animated' },
-            _react2.default.createElement('img', { className: 'campionImage', onClick: this.handleClick.bind(this, character.id), src: 'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }),
+            _react2.default.createElement(
+              _reactRouter.Link,
+              { to: '/champion/' + character.name },
+              _react2.default.createElement('img', { className: 'campionImage' /*onClick={this.handleClick.bind(this, character.id)} */, src: 'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full })
+            ),
             _react2.default.createElement(
               'div',
               { className: 'caption text-center' },
@@ -1182,7 +1177,7 @@ var Home = (function (_React$Component) {
                 { className: 'list-inline' },
                 _react2.default.createElement(
                   'li',
-                  null,
+                  { className: 'characterTitle' },
                   ' ',
                   character.title
                 )
@@ -1192,7 +1187,7 @@ var Home = (function (_React$Component) {
                 null,
                 _react2.default.createElement(
                   _reactRouter.Link,
-                  { to: '/characters/' + character.characterId },
+                  { to: '/champion/' + character.name },
                   _react2.default.createElement(
                     'strong',
                     null,
@@ -1303,10 +1298,9 @@ var Navbar = (function (_React$Component2) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       _NavbarStore2.default.listen(this.onChange);
-      _NavbarActions2.default.getCharacterCount();
+      _NavbarActions2.default.getChampionCountAndNames();
 
       var socket = io.connect();
-
       socket.on('onlineUsers', function (data) {
         _NavbarActions2.default.updateOnlineUsers(data);
       });
@@ -1320,7 +1314,17 @@ var Navbar = (function (_React$Component2) {
           _NavbarActions2.default.updateAjaxAnimation('fadeOut');
         }, 750);
       });
+
+      $.get(this.state.ChampionNames, (function (result) {
+        var ChampionsList = this.state.ChampionNames;
+        $("#inputSearchChampions").autocomplete({
+          source: ChampionsList
+        });
+      }).bind(this));
     }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate() {}
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
@@ -1400,7 +1404,7 @@ var Navbar = (function (_React$Component2) {
             _react2.default.createElement(
               'div',
               { className: 'input-group' },
-              _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: this.state.totalCharacters + ' characters', value: this.state.searchQuery, onChange: _NavbarActions2.default.updateSearchQuery }),
+              _react2.default.createElement('input', { id: 'inputSearchChampions', type: 'text', className: 'form-control', placeholder: this.state.totalCharacters + ' characters', value: this.state.searchQuery, onChange: _NavbarActions2.default.updateSearchQuery }),
               _react2.default.createElement(
                 'span',
                 { className: 'input-group-btn' },
@@ -1992,7 +1996,7 @@ exports.default = _react2.default.createElement(
   { component: _App2.default },
   _react2.default.createElement(_reactRouter.Route, { path: '/', component: _Home2.default }),
   _react2.default.createElement(_reactRouter.Route, { path: '/add', component: _AddCharacter2.default }),
-  _react2.default.createElement(_reactRouter.Route, { path: '/characters/:id', component: _Character2.default }),
+  _react2.default.createElement(_reactRouter.Route, { path: '/champion/:id', component: _Character2.default }),
   _react2.default.createElement(_reactRouter.Route, { path: '/shame', component: _CharacterList2.default }),
   _react2.default.createElement(_reactRouter.Route, { path: '/stats', component: _Stats2.default }),
   _react2.default.createElement(
@@ -2171,12 +2175,12 @@ var CharacterStore = (function () {
     key: 'onGetCharacterSuccess',
     value: function onGetCharacterSuccess(data) {
       (0, _underscore.assign)(this, data);
-      $(document.body).attr('class', 'profile ' + this.race.toLowerCase());
-      var localData = localStorage.getItem('NEF') ? JSON.parse(localStorage.getItem('NEF')) : {};
-      var reports = localData.reports || [];
-      this.isReported = (0, _underscore.contains)(reports, this.characterId);
+      // $(document.body).attr('class', 'profile ' + this.race.toLowerCase());
+      // let localData = localStorage.getItem('NEF') ? JSON.parse(localStorage.getItem('NEF')) : {};
+      // let reports = localData.reports || [];
+      // this.isReported = contains(reports, this.characterId);
       // If is NaN (from division by zero) then set it to "0"
-      this.winLossRatio = (this.wins / (this.wins + this.losses) * 100 || 0).toFixed(1);
+      // this.winLossRatio = ((this.wins / (this.wins + this.losses) * 100) || 0).toFixed(1);
     }
   }, {
     key: 'onGetCharacterFail',
@@ -2282,13 +2286,13 @@ var HomeStore = (function () {
   }
 
   _createClass(HomeStore, [{
-    key: 'onGetTwoCharactersSuccess',
-    value: function onGetTwoCharactersSuccess(data) {
+    key: 'onGetCharactersSuccess',
+    value: function onGetCharactersSuccess(data) {
       this.characters = data;
     }
   }, {
-    key: 'onGetTwoCharactersFail',
-    value: function onGetTwoCharactersFail(errorMessage) {
+    key: 'onGetCharactersFail',
+    value: function onGetCharactersFail(errorMessage) {
       toastr.error(errorMessage);
     }
   }, {
@@ -2338,7 +2342,7 @@ var NavbarStore = (function () {
   _createClass(NavbarStore, [{
     key: 'onFindCharacterSuccess',
     value: function onFindCharacterSuccess(payload) {
-      payload.history.pushState(null, '/characters/' + payload.characterId);
+      payload.history.pushState(null, '/characters/' + payload.id);
     }
   }, {
     key: 'onFindCharacterFail',
@@ -2364,13 +2368,14 @@ var NavbarStore = (function () {
       this.searchQuery = event.target.value;
     }
   }, {
-    key: 'onGetCharacterCountSuccess',
-    value: function onGetCharacterCountSuccess(data) {
-      this.totalCharacters = data.count;
+    key: 'getChampionCountAndNamesSuccess',
+    value: function getChampionCountAndNamesSuccess(data) {
+      this.totalCharacters = data.length;
+      this.ChampionNames = data;
     }
   }, {
-    key: 'onGetCharacterCountFail',
-    value: function onGetCharacterCountFail(jqXhr) {
+    key: 'getChampionCountAndNamesFail',
+    value: function getChampionCountAndNamesFail(jqXhr) {
       toastr.error(jqXhr.responseJSON.message);
     }
   }]);

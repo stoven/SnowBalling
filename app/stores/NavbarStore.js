@@ -11,7 +11,7 @@ class NavbarStore {
   }
 
   onFindCharacterSuccess(payload) {
-    payload.history.pushState(null, '/characters/' + payload.characterId);
+    payload.history.pushState(null, '/characters/' + payload.id);
   }
 
   onFindCharacterFail(payload) {
@@ -33,11 +33,12 @@ class NavbarStore {
     this.searchQuery = event.target.value;
   }
 
-  onGetCharacterCountSuccess(data) {
-    this.totalCharacters = data.count;
+  getChampionCountAndNamesSuccess(data) {
+    this.totalCharacters = data.length;
+    this.ChampionNames = data;
   }
 
-  onGetCharacterCountFail(jqXhr) {
+  getChampionCountAndNamesFail(jqXhr) {
     toastr.error(jqXhr.responseJSON.message);
   }
 }

@@ -14,7 +14,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     HomeStore.listen(this.onChange);
-    HomeActions.getTwoCharacters();
+    HomeActions.getCharacters();
   }
 
   componentWillUnmount() {
@@ -26,8 +26,8 @@ class Home extends React.Component {
   }
 
   handleClick(character) {
-    var winner = character.characterId;
-    var loser = first(without(this.state.characters, findWhere(this.state.characters, { characterId: winner }))).characterId;
+    var winner = character.id;
+    var loser = first(without(this.state.characters, findWhere(this.state.characters, { id: winner }))).id;
     HomeActions.vote(winner, loser);
   }
 
@@ -38,13 +38,13 @@ class Home extends React.Component {
     	characterNodes.push(
     		<div key={character.id} className='col-xs-6 col-sm-6 col-md-2 champion'>
           <div className='thumbnail fadeInUp animated'>
-            <img className='campionImage' onClick={this.handleClick.bind(this, character.id)} src={'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }/>
+            <Link to={'/champion/' + character.name}><img className='campionImage' /*onClick={this.handleClick.bind(this, character.id)} */src={'http://ddragon.leagueoflegends.com/cdn/5.24.2/img/champion/' + character.image.full }/></Link>
             <div className='caption text-center'>
               <ul className='list-inline'>
-                <li> {character.title}</li>
+                <li className='characterTitle'> {character.title}</li>
               </ul>
               <h4>
-                <Link to={'/characters/' + character.characterId}><strong>{character.name}</strong></Link>
+                <Link to={'/champion/' + character.name}><strong>{character.name}</strong></Link>
               </h4>
             </div>
           </div>

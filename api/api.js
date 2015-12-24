@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var Character = require('../models/character');
 var config = require('../config');
 var _ = require('underscore');
+var request = require('request');
 
 module.exports = {
   addNewCharacter: function(app) {
@@ -91,10 +92,10 @@ module.exports = {
      * Returns 2 random characters of the same gender that have not been voted yet.
      */
     app.get('/api/characters', function(req, res, next) {
-      var choices = ['Female', 'Male'];
-      var randomGender = _.sample(choices);
+      // var choices = ['Female', 'Male'];
+      // var randomGender = _.sample(choices);
       //Load the request module
-      var request = require('request');
+      
       var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=altimages,image&api_key=43005d89-28b6-4bd8-8086-a5ae3f5139f1';
       //Lets try to make a HTTPS GET request to modulus.io's website.
       //All we did here to make HTTPS call is changed the `http` to `https` in URL.
@@ -167,11 +168,29 @@ module.exports = {
      * Returns the total number of characters.
      */
     app.get('/api/characters/count', function(req, res, next) {
-      Character.count({}, function(err, count) {
-        if (err) return next(err);
-        res.send({
-          count: count
-        });
+      var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=altimages,image&api_key=43005d89-28b6-4bd8-8086-a5ae3f5139f1';
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        characters = JSON.parse(body);
+
+        res.send(characters['data']);
       });
     });
   },
@@ -258,20 +277,29 @@ module.exports = {
      * Looks up a character by name. (case-insensitive)
      */
     app.get('/api/characters/search', function(req, res, next) {
-      var characterName = new RegExp(req.query.name, 'i');
-
-      Character.findOne({
-        name: characterName
-      }, function(err, character) {
-        if (err) return next(err);
-
-        if (!character) {
-          return res.status(404).send({
-            message: 'Character not found.'
-          });
+      var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=altimages,image&api_key=43005d89-28b6-4bd8-8086-a5ae3f5139f1';
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
         }
 
-        res.send(character);
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        characters = JSON.parse(body);
+
+        res.send(characters['data']);
       });
     });
   },
@@ -282,20 +310,40 @@ module.exports = {
      */
     app.get('/api/characters/:id', function(req, res, next) {
       var id = req.params.id;
+      var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion/'+id+'?champData=all&api_key=43005d89-28b6-4bd8-8086-a5ae3f5139f1';
+       
+      // Character.findOne({
+      //   characterId: id
+      // }, function(err, character) {
+      //   if (err) return next(err);
 
-      Character.findOne({
-        characterId: id
-      }, function(err, character) {
-        if (err) return next(err);
-
-        if (!character) {
-          return res.status(404).send({
-            message: 'Character not found.'
-          });
+      //   if (!character) {
+      //     return res.status(404).send({
+      //       message: 'Character not found.'
+      //     });
+      //   }
+      var character;
+      request({
+        uri: url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
         }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        character = JSON.parse(body);
 
         res.send(character);
       });
+      // });
     });
   },
   reportCharacter: function(app) {

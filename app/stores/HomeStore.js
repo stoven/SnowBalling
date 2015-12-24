@@ -7,11 +7,11 @@ class HomeStore {
     this.characters = [];
   }
 
-  onGetTwoCharactersSuccess(data) {
+  onGetCharactersSuccess(data) {
     this.characters = data;
   }
 
-  onGetTwoCharactersFail(errorMessage) {
+  onGetCharactersFail(errorMessage) {
     toastr.error(errorMessage);
   }
 

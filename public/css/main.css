@@ -181,13 +181,6 @@ td,
 th {
   padding: 0;
 }
-.champion{
-  height:210px;
-  margin-bottom: 20px;
-}
-.campionImage{
-  margin-top:5px;
-}
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
   *,
@@ -7352,82 +7345,117 @@ footer .thumb-md:hover {
 /*
  * Character profile page styles.
  */
+.profile .lore.rest,
+.lore.rest {
+  display: none;
+}
+#showAllLore {
+  float: right;
+}
+#showAllLore:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+.champion .characterTitle {
+  white-space: nowrap;
+}
+/*
 .profile {
   color: #fff;
   background-size: cover;
 }
+
 .profile.amarr {
   background-image: url('/img/amarr_bg.jpg');
 }
+
 .profile.caldari {
   background-image: url('/img/caldari_bg.jpg');
 }
+
 .profile.gallente {
   background-image: url('/img/gallente_bg.jpg');
 }
+
 .profile.minmatar {
   background-image: url('/img/minmatar_bg.jpg');
 }
+
 .profile footer {
   color: #fff;
   background: transparent;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid rgba(255,255,255,.15);
 }
+
 .profile .navbar-default {
   background-color: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255,255,255,.15);
   box-shadow: none;
 }
+
 .profile .navbar-default .navbar-brand {
   color: #fff;
 }
+
+
 .profile .form-control {
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.15);
   border-right: 0;
+
+  &:focus {
+    border-color: rgba(255,255,255,.3);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.055),0 0 8px rgba(255,255,255,.3);
+  }
 }
-.profile .form-control:focus {
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.055), 0 0 8px rgba(255, 255, 255, 0.3);
-}
+
 .profile .input-group-btn:last-child > .btn {
   margin-left: 0;
 }
+
 .profile .btn-default {
   color: #fff;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.15);
-  -webkit-transition: background-color 0.3s;
-  transition: background-color 0.3s;
+  background-color: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.15);
+  transition: background-color .3s;
+
+  &:focus,
+  &:hover {
+    color: #fff;
+    background-color: rgba(255,255,255,.3);
+  }
 }
-.profile .btn-default:focus,
-.profile .btn-default:hover {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.3);
-}
+
+
 .profile .tri {
   border-top-color: #fff;
+
+  &.invert {
+    border-bottom-color: #fff;
+  }
 }
-.profile .tri.invert {
-  border-bottom-color: #fff;
-}
+
 .profile .navbar-default .navbar-nav > .open > a,
 .profile .navbar-default .navbar-nav > .open > a:hover,
 .profile .navbar-default .navbar-nav > .open > a:focus {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255,255,255,.15);
 }
+
 .profile .navbar-default .navbar-nav > li > a:hover,
 .profile .navbar-default .navbar-nav > li > a:focus {
   color: #fff;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255,255,255,.15);
 }
+
 .profile .navbar-default .navbar-nav > li > a {
   color: #fff;
 }
+
 .profile footer .col-sm-5 {
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255,255,255,.15);
 }
+*/
 .table {
   font-size: inherit;
 }
@@ -7595,16 +7623,20 @@ label {
 }
 .profile-img {
   position: relative;
+  margin-top: 25px;
   margin-bottom: 20px;
   float: left;
-  width: 256px;
-  height: 256px;
+  width: 220px;
+  height: 400px;
   box-shadow: 0 2px 25px rgba(0, 0, 0, 0.25);
+}
+.profile-img-src {
+  width: 220px;
 }
 .profile-info {
   margin: 0 0 20px 286px;
-  max-width: 405px;
-  color: #fff;
+  /*max-width: 405px;
+  color: #fff;*/
 }
 .btn-transparent {
   border: 1px solid white;

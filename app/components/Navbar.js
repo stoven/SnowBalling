@@ -20,10 +20,9 @@ class Navbar extends React.Component {
 
   componentDidMount() {
     NavbarStore.listen(this.onChange);
-    NavbarActions.getCharacterCount();
+    NavbarActions.getChampionCountAndNames();
 
     let socket = io.connect();
-
     socket.on('onlineUsers', (data) => {
       NavbarActions.updateOnlineUsers(data);
     });
@@ -37,6 +36,16 @@ class Navbar extends React.Component {
         NavbarActions.updateAjaxAnimation('fadeOut');
       }, 750);
     });
+
+    $.get(this.state.ChampionNames, function(result) {
+      let ChampionsList = this.state.ChampionNames;
+      $( "#inputSearchChampions" ).autocomplete({
+        source: ChampionsList
+      });
+    }.bind(this));
+  }
+
+  componentDidUpdate(){
   }
 
   componentWillUnmount() {
@@ -90,7 +99,7 @@ class Navbar extends React.Component {
         <div id='navbar' className='navbar-collapse collapse'>
           <form ref='searchForm' className='navbar-form navbar-left animated' onSubmit={this.handleSubmit.bind(this)}>
             <div className='input-group'>
-              <input type='text' className='form-control' placeholder={this.state.totalCharacters + ' characters'} value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery} />
+              <input id='inputSearchChampions' type='text' className='form-control' placeholder={this.state.totalCharacters + ' characters'} value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery} />
               <span className='input-group-btn'>
                 <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
               </span>

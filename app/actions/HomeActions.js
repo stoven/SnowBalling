@@ -3,20 +3,27 @@ import alt from '../alt';
 class HomeActions {
   constructor() {
     this.generateActions(
-      'getTwoCharactersSuccess',
-      'getTwoCharactersFail',
+      'getCharactersSuccess',
+      'getCharactersFail',
       'voteFail'
     );
   }
 
-  getTwoCharacters() {
-    $.ajax({ url: '/api/characters' })
+  getCharacters() {
+    let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+    if(!Object.keys(localData).length==0){
+      $.ajax({ url: '/api/characters' })
       .done(data => {
-        this.actions.getTwoCharactersSuccess(data);
+        localStorage.setItem('LOLChampions', JSON.stringify(data));
+        this.actions.getCharactersSuccess(data);
       })
       .fail(jqXhr => {
-        this.actions.getTwoCharactersFail(jqXhr.responseJSON.message);
+        this.actions.getCharactersFail(jqXhr.responseJSON.message);
       });
+    }
+    else{
+      this.actions.getCharactersSuccess(localData);
+    }
   }
 
   vote(winner, loser) {
