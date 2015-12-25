@@ -7,7 +7,6 @@ import Character from './components/Character';
 import CharacterList from './components/CharacterList';
 import Stats from './components/Stats';
 
-//turns payload to { category: 'female', race: 'gallente', bloodline: 'intaki' } 
 
 export default (
   <Route component={App}>
@@ -19,6 +18,7 @@ export default (
     <Route path=':category' component={CharacterList}> 
       <Route path=':race' component={CharacterList}>
         <Route path=':bloodline' component={CharacterList} />
+      {/*turns payload to { category: 'female', race: 'gallente', bloodline: 'intaki' } */}
       </Route>
     </Route>
   </Route>

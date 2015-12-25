@@ -140,26 +140,26 @@ module.exports = {
         conditions[key] = new RegExp('^' + value + '$', 'i');
       });
 
-      Character
-        .find(conditions)
-        .sort('-wins') // Sort in descending order (highest wins on top)
-        .limit(100)
-        .exec(function(err, characters) {
-          if (err) return next(err);
+      // Character
+      //   .find(conditions)
+      //   .sort('-wins') // Sort in descending order (highest wins on top)
+      //   .limit(100)
+      //   .exec(function(err, characters) {
+      //     if (err) return next(err);
 
-          // Sort by winning percentage
-          characters.sort(function(a, b) {
-            if (a.wins / (a.wins + a.losses) < b.wins / (b.wins + b.losses)) {
-              return 1;
-            }
-            if (a.wins / (a.wins + a.losses) > b.wins / (b.wins + b.losses)) {
-              return -1;
-            }
-            return 0;
-          });
+      //     // Sort by winning percentage
+      //     characters.sort(function(a, b) {
+      //       if (a.wins / (a.wins + a.losses) < b.wins / (b.wins + b.losses)) {
+      //         return 1;
+      //       }
+      //       if (a.wins / (a.wins + a.losses) > b.wins / (b.wins + b.losses)) {
+      //         return -1;
+      //       }
+      //       return 0;
+      //     });
 
-          res.send(characters);
-        });
+      //     res.send(characters);
+      //   });
     });
   },
   getCount: function(app) {

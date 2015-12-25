@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {isEqual} from 'underscore';
 import CharacterListStore from '../stores/CharacterListStore';
 import CharacterListActions from '../actions/CharacterListActions';
+import NotFound from './NotFound';
 
 class CharacterList extends React.Component {
   constructor(props) {
@@ -31,6 +32,10 @@ class CharacterList extends React.Component {
   }
 
   render() {
+
+    if (Object.keys(this.state.characters).length === 0) {
+      return (<NotFound />);
+    }
     var characterNodes =[];
     {/* ranking styles
     var counter=0;

@@ -41,7 +41,7 @@ class NavbarActions {
 
   getChampionCountAndNames() {
     let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
-    if(!!Object.keys(localData).length==0){
+    if(Object.keys(localData).length==0){
     //$.ajax({ url: '/api/characters/count' })
     $.ajax({ url: '/api/characters' })
       .done((data) => {

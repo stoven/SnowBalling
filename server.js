@@ -83,7 +83,9 @@ app.use(function(req, res) {
       var page = swig.renderFile('views/index.html', { html: html });
       res.status(200).send(page);
     } else {
-      res.status(404).send('Page Not Found')
+      //res.status(404).send('Page Not Found')
+      var page = swig.renderFile('views/404.html');
+      res.status(200).send(page);
     }
   });
 });

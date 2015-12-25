@@ -12,6 +12,7 @@ var babelify = require('babelify');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var uglify = require('gulp-uglify');
+var sass = require('gulp-sass');
 
 var production = process.env.NODE_ENV === 'production';
 
@@ -101,7 +102,7 @@ gulp.task('browserify-watch', ['browserify-vendor'], function() {
  |--------------------------------------------------------------------------
  */
 gulp.task('styles', function() {
-  return gulp.src('app/stylesheets/main.less')
+  return gulp.src(['app/stylesheets/main.less','app/stylesheets/error.css'])
     .pipe(plumber())
     .pipe(less())
     .pipe(autoprefixer())
@@ -109,9 +110,14 @@ gulp.task('styles', function() {
     .pipe(gulp.dest('public/css'));
 });
 
+gulp.task('jqueryui_styles', function() {
+  return gulp.src(['app/stylesheets/base/*.*','app/stylesheets/base/**/*.*'])
+    .pipe(gulp.dest('public/css/base'));
+});
+
 gulp.task('watch', function() {
   gulp.watch('app/stylesheets/**/*.less', ['styles']);
 });
 
-gulp.task('default', ['styles', 'vendor', 'browserify-watch', 'watch']);
-gulp.task('build', ['styles', 'vendor', 'browserify']);
+gulp.task('default', ['styles', 'jqueryui_styles', 'vendor', 'browserify-watch', 'watch']);
+gulp.task('build', ['styles', 'jqueryui_styles', 'vendor', 'browserify']);

@@ -16,25 +16,42 @@ class CharacterListActions {
     };
 
     if(payload.category.toLowerCase()==='all'){
-      url='/api/characters'
+      let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+      if(Object.keys(localData).length==0){
+        $.ajax({ url: '/api/characters' })
+        .done((data) => {
+          this.actions.getChampionCountAndNamesSuccess(Object.keys(data));
+          localStorage.setItem('LOLChampions', JSON.stringify(data));
+        })
+        .fail((jqXhr) => {
+          this.actions.getChampionCountAndNamesFail(jqXhr);
+        });
+      }
+      else{
+        this.actions.getChampionCountAndNamesSuccess(Object.keys(localData));
+      }
     }
-    if (payload.category === 'female') {
-      params.gender = 'female';
-    } else if (payload.category === 'male') {
-      params.gender = 'male';
+    else
+    {
+      this.actions.getCharactersSuccess([]);
     }
+    // if (payload.category === 'female') {
+    //   params.gender = 'female';
+    // } else if (payload.category === 'male') {
+    //   params.gender = 'male';
+    // }
 
-    if (payload.category === 'shame') {
-      url = '/api/characters/shame';
-    }
+    // if (payload.category === 'shame') {
+    //   url = '/api/characters/shame';
+    // }
 
-    $.ajax({ url: url, data: params })
-      .done((data) => {
-        this.actions.getCharactersSuccess(data);
-      })
-      .fail((jqXhr) => {
-        this.actions.getCharactersFail(jqXhr);
-      });
+    // $.ajax({ url: url, data: params })
+    //   .done((data) => {
+    //     this.actions.getCharactersSuccess(data);
+    //   })
+    //   .fail((jqXhr) => {
+    //     this.actions.getCharactersFail(jqXhr);
+    //   });
   }
 }
 
