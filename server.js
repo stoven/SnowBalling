@@ -84,8 +84,8 @@ app.use(function(req, res) {
       res.status(200).send(page);
     } else {
       //res.status(404).send('Page Not Found')
-      var page = swig.renderFile('views/404.html');
-      res.status(200).send(page);
+      //var page = swig.renderFile('views/404.html');
+      res.status(404).redirect('/notfound');
     }
   });
 });

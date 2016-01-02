@@ -1,11 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router';
+import {Link,Router} from 'react-router';
 import {isEqual} from 'underscore';
 import CharacterListStore from '../stores/CharacterListStore';
 import CharacterListActions from '../actions/CharacterListActions';
-import NotFound from './NotFound';
 
 class CharacterList extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = CharacterListStore.getState();
@@ -33,9 +33,6 @@ class CharacterList extends React.Component {
 
   render() {
 
-    if (Object.keys(this.state.characters).length === 0) {
-      return (<NotFound />);
-    }
     var characterNodes =[];
     {/* ranking styles
     var counter=0;
@@ -99,3 +96,6 @@ class CharacterList extends React.Component {
 }
 
 export default CharacterList;
+CharacterList.contextTypes = {
+  router: React.PropTypes.func.isRequired
+};

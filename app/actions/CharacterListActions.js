@@ -3,13 +3,13 @@ import alt from '../alt';
 class CharacterListActions {
   constructor() {
     this.generateActions(
-      'getCharactersSuccess',
-      'getCharactersFail'
+      'getChampionCountAndNamesSuccess',
+      'getChampionCountAndNamesFail'
     );
   }
 
   getCharacters(payload) {
-    let url = '/api/characters/top';
+    let url = '/api/characters';
     let params = {
       race: payload.race,
       bloodline: payload.bloodline
@@ -20,20 +20,21 @@ class CharacterListActions {
       if(Object.keys(localData).length==0){
         $.ajax({ url: '/api/characters' })
         .done((data) => {
-          this.actions.getChampionCountAndNamesSuccess(Object.keys(data));
           localStorage.setItem('LOLChampions', JSON.stringify(data));
+          this.actions.getChampionCountAndNamesSuccess(data);
         })
         .fail((jqXhr) => {
           this.actions.getChampionCountAndNamesFail(jqXhr);
         });
       }
       else{
-        this.actions.getChampionCountAndNamesSuccess(Object.keys(localData));
+        this.actions.getChampionCountAndNamesSuccess(localData);
       }
     }
     else
     {
-      this.actions.getCharactersSuccess([]);
+      this.actions.getChampionCountAndNamesSuccess([]);
+      //Router.transiteTo('notfound');
     }
     // if (payload.category === 'female') {
     //   params.gender = 'female';

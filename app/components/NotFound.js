@@ -13,20 +13,12 @@ class NotFound extends React.Component {
   constructor(props) {
     super(props);
     //this.state = NotFoundStore.getState();
-    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {}
 
   componentWillUnmount() {
-    NotFoundStore.unlisten(this.onChange);
   }
-
-  onChange(state) {
-    this.setState(state);
-  }
-
-  handleClick(character) {}
 
 
   render() {

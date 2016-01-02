@@ -7,11 +7,11 @@ class CharacterListStore {
     this.characters = [];
   }
 
-  onGetCharactersSuccess(data) {
+  onGetChampionCountAndNamesSuccess(data) {
     this.characters = data;
   }
 
-  onGetCharactersFail(jqXhr) {
+  onGetChampionCountAndNamesFail(jqXhr) {
     toastr.error(jqXhr.responseJSON.message);
   }
 }

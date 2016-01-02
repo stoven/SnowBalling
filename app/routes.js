@@ -6,7 +6,7 @@ import AddCharacter from './components/AddCharacter';
 import Character from './components/Character';
 import CharacterList from './components/CharacterList';
 import Stats from './components/Stats';
-
+import NotFound from './components/NotFound';
 
 export default (
   <Route component={App}>
@@ -15,6 +15,7 @@ export default (
     <Route path='/champion/:id' component={Character} />
     <Route path='/shame' component={CharacterList} />
     <Route path='/stats' component={Stats} />
+    <Route path='/notfound' component={NotFound} />
     <Route path=':category' component={CharacterList}> 
       <Route path=':race' component={CharacterList}>
         <Route path=':bloodline' component={CharacterList} />

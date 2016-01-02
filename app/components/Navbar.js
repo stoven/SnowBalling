@@ -155,6 +155,15 @@ class Navbar extends React.Component {
               </ul>
             </li>
             <li><Link to='/add'>Add</Link></li>
+            <li><div id="ckepop">
+              <div id="ckepop">
+              <span className="jiathis_txt">分享到：</span>
+              <a className="jiathis_button_weixin">微信</a> 
+              <a href="http://www.jiathis.com/share"  className="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+              <a className="jiathis_counter_style"></a> </div> 
+              <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1" charSet="utf-8"></script>
+              </div>
+            </li>
           </ul>
         </div>
       </nav>
