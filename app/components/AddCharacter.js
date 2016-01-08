@@ -49,6 +49,7 @@ class AddCharacter extends React.Component {
             <div className='panel panel-default'>
               <div className='panel-heading'>Add Character</div>
               <div className='panel-body'>
+                <h3>Concept Only, Not working...</h3>
                 <form onSubmit={this.handleSubmit.bind(this)}>
                   <div className={'form-group ' + this.state.nameValidationState}>
                     <label className='control-label'>Character Name</label>

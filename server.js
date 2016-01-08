@@ -50,6 +50,8 @@ api.updateCharacter(app);
 api.getStat(app);
 api.reportCharacter(app);
 api.showCharacter(app);
+api.getPlayerGame(app);
+api.loginUser(app);
 /**
  * Socket.io stuff.
  */

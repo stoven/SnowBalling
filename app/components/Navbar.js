@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router';
 import NavbarStore from '../stores/NavbarStore';
 import NavbarActions from '../actions/NavbarActions';
+import NavLogin from './NavLogin'
 
 class ChampionLink extends React.Component {
   render(){
@@ -166,6 +167,7 @@ class Navbar extends React.Component {
             </li>
           </ul>
         </div>
+        <NavLogin />
       </nav>
     );
   }

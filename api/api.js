@@ -132,7 +132,7 @@ module.exports = {
      * GET /api/characters/top
      * Return 100 highest ranked characters. Filter by gender, race and bloodline.
      */
-    app.get('/api/characters/top', function(req, res, next) {
+    app.get('/api/characters/top10', function(req, res, next) {
       var params = req.query;
       var conditions = {};
 
@@ -383,6 +383,43 @@ module.exports = {
       });
     });
   },
+  getPlayerGame: function(app) {
+    /**
+     * POST /api/report
+     * Reports a character. Character is removed after 4 reports.
+     */
+    app.post('/api/getPlayerGame', function(req, res, next) {
+      var playername = req.body.playername;
+
+      Character.findOne({
+        characterId: characterId
+      }, function(err, character) {
+        if (err) return next(err);
+
+        if (!character) {
+          return res.status(404).send({
+            message: 'Character not found.'
+          });
+        }
+
+        character.reports++;
+
+        if (character.reports > 4) {
+          character.remove();
+          return res.send({
+            message: character.name + ' has been deleted.'
+          });
+        }
+
+        character.save(function(err) {
+          if (err) return next(err);
+          res.send({
+            message: character.name + ' has been reported.'
+          });
+        });
+      });
+    });
+  },
   getStat: function(app) {
     /**
      * GET /api/stats
@@ -517,6 +554,39 @@ module.exports = {
             leadingBloodline: results[9]
           });
         });
+    });
+  },
+  loginUser: function(app) {
+    /**
+     * GET /api/characters/count
+     * Returns the total number of characters.
+     */
+    app.post('/api/loginUser', function(req, res, next) {
+      var url = 'http://localhost:8000/api/login';
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url,
+        method: "POST",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        json:true,
+        body: {'username':req.body.username,'password':req.body.password}
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        res.send(body);
+      });
     });
   }
 }

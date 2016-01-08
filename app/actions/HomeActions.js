@@ -3,28 +3,28 @@ import alt from '../alt';
 class HomeActions {
   constructor() {
     this.generateActions(
-      'getCharactersSuccess',
-      'getCharactersFail',
+      'getPlayerGameSuccess',
+      'getPlayerGameFail',
       'updateSearchQuery',
       'voteFail'
     );
   }
 
-  getCharacters() {
-    let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
-    if(!Object.keys(localData).length==0){
-      $.ajax({ url: '/api/characters' })
+  getPlayerGame() {
+    //let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+    let params = {
+      playername: payload.playername
+    };
+
+      $.ajax({ url: '/api/getPlayerGame',data: params })
       .done(data => {
-        localStorage.setItem('LOLChampions', JSON.stringify(data));
+        //localStorage.setItem('LOLChampions', JSON.stringify(data));
         this.actions.getCharactersSuccess(data);
       })
       .fail(jqXhr => {
         this.actions.getCharactersFail(jqXhr.responseJSON.message);
       });
-    }
-    else{
-      this.actions.getCharactersSuccess(localData);
-    }
+    
   }
 
   vote(winner, loser) {
