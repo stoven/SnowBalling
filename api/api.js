@@ -1,3 +1,5 @@
+import Constants from '../constants/ConfigConstants'
+var API_KEY = Constants.API_KEY;
 var xml2js = require('xml2js');
 var async = require('async');
 var request = require('request');
@@ -6,6 +8,7 @@ var Character = require('../models/character');
 var config = require('../config');
 var _ = require('underscore');
 var request = require('request');
+
 
 module.exports = {
   addNewCharacter: function(app) {
@@ -96,7 +99,7 @@ module.exports = {
       // var randomGender = _.sample(choices);
       //Load the request module
       
-      var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=altimages,image&api_key=43005d89-28b6-4bd8-8086-a5ae3f5139f1';
+      var url = 'https://global.api.pvp.net/api/lol/static-data/na/v1.2/champion?champData=altimages,image&api_key='+Constants.API_KEY;
       //Lets try to make a HTTPS GET request to modulus.io's website.
       //All we did here to make HTTPS call is changed the `http` to `https` in URL.
       var characters;
@@ -388,36 +391,60 @@ module.exports = {
      * POST /api/report
      * Reports a character. Character is removed after 4 reports.
      */
-    app.post('/api/getPlayerGame', function(req, res, next) {
-      var playername = req.body.playername;
-
-      Character.findOne({
-        characterId: characterId
-      }, function(err, character) {
-        if (err) return next(err);
-
-        if (!character) {
-          return res.status(404).send({
-            message: 'Character not found.'
-          });
+    app.get('/api/getPlayerGame', function(req, res, next) {
+      var playername = req.query.playername;
+      var name_url = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+playername+'?api_key='+API_KEY;
+      //var summonerId;
+      async.waterfall([
+        function(callback){
+      request({
+        uri: name_url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
         }
 
-        character.reports++;
-
-        if (character.reports > 4) {
-          character.remove();
-          return res.send({
-            message: character.name + ' has been deleted.'
-          });
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
         }
 
-        character.save(function(err) {
-          if (err) return next(err);
-          res.send({
-            message: character.name + ' has been reported.'
-          });
-        });
+        //All is good. Print the body
+        let player = JSON.parse(body);
+        player = player[Object.keys(player)[0]];
+        var summonerId=player['id'];
+        callback(error,summonerId);
+        //res.send(player);
       });
+    },
+    function(summonerId){
+      
+      var game_url = 'https://na.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/NA1/'+summonerId+'?api_key='+API_KEY;
+      request({
+        uri: game_url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          console.log('Invalid Status Code Returned:', response.statusCode);
+          return 'error'+response.statusCode;
+        }
+
+        //All is good. Print the body
+        //let game = JSON.parse(body);
+
+        res.send(body);
+      });
+    }]);
     });
   },
   getStat: function(app) {

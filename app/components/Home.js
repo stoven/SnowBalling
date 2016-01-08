@@ -13,6 +13,7 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({'game':null});
     HomeStore.listen(this.onChange);
     //HomeActions.getCharacters();
   }
@@ -41,7 +42,7 @@ class Home extends React.Component {
     let searchQuery = this.state.searchQuery.trim();
 
     if (searchQuery) {
-      NavbarActions.findCharacter({
+      HomeActions.getPlayerGame({
         searchQuery: searchQuery,
         searchForm: this.refs.searchForm,
         history: this.props.history
@@ -50,11 +51,12 @@ class Home extends React.Component {
   }
 
   render() {
-    
-
-    return (
-      <div className='container'>
-        <h3 className='text-center'>Search Summoner:</h3>
+    var pageContent;
+    if(this.state.game!=null && Object.keys(this.state.game).length>0){
+      pageContent = <div>{this.state.game}</div>
+    }
+    else{
+      pageContent = <div><h3 className='text-center'>Search Summoner:</h3>
         <form ref='searchForm' className='navbar-form navbar-left animated' onSubmit={this.handleSubmit.bind(this)}>
             <div className='input-group'>
               <input id='inputSearchChampions' type='text' className='form-control' placeholder="Summoner's Name" value={this.state.searchQuery} onChange={HomeActions.updateSearchQuery} />
@@ -63,8 +65,14 @@ class Home extends React.Component {
               </span>
             </div>
           </form>
+          </div>
+    }
+    return (
+      <div className='container'>
+      {pageContent}
       </div>
     );
+    
   }
 }
 

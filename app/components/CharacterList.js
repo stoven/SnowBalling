@@ -96,6 +96,3 @@ class CharacterList extends React.Component {
 }
 
 export default CharacterList;
-CharacterList.contextTypes = {
-  router: React.PropTypes.func.isRequired
-};

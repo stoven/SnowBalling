@@ -10,19 +10,25 @@ class HomeActions {
     );
   }
 
-  getPlayerGame() {
+  getPlayerGame(payload) {
     //let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
     let params = {
-      playername: payload.playername
+      playername: payload.searchQuery
     };
 
       $.ajax({ url: '/api/getPlayerGame',data: params })
       .done(data => {
         //localStorage.setItem('LOLChampions', JSON.stringify(data));
-        this.actions.getCharactersSuccess(data);
+        //console.log(data);
+        if(data.slice(0, 'error'.length) == 'error'){
+          this.actions.getPlayerGameFail(jqXhr.responseJSON.message);
+        }
+        else{
+          this.actions.getPlayerGameSuccess(data);
+        }
       })
       .fail(jqXhr => {
-        this.actions.getCharactersFail(jqXhr.responseJSON.message);
+        this.actions.getPlayerGameFail(jqXhr.responseJSON.message);
       });
     
   }

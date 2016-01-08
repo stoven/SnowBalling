@@ -4,15 +4,15 @@ import HomeActions from '../actions/HomeActions';
 class HomeStore {
   constructor() {
     this.bindActions(HomeActions);
-    this.characters = [];
+    this.game = null;
     this.searchQuery = '';
   }
 
-  onGetCharactersSuccess(data) {
-    this.characters = data;
+  onGetPlayerGameSuccess(data) {
+    this.game = data;
   }
 
-  onGetCharactersFail(errorMessage) {
+  onGetPlayerGameFail(errorMessage) {
     toastr.error(errorMessage);
   }
 
