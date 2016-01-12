@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router';
 import NavbarStore from '../stores/NavbarStore';
 import NavbarActions from '../actions/NavbarActions';
-import NavLogin from './NavLogin'
+import NavLogin from './NavLogin';
 
 class ChampionLink extends React.Component {
   render(){
@@ -44,6 +44,7 @@ class Navbar extends React.Component {
         source: ChampionsList
       });
     }.bind(this));
+    //var jiathis_config = {data_track_clickback:'true'};
   }
 
   componentDidUpdate(){
@@ -70,7 +71,6 @@ class Navbar extends React.Component {
       });
     }
   }
-
   render() {
     return (
       <nav className='navbar navbar-default navbar-static-top'>
@@ -113,16 +113,13 @@ class Navbar extends React.Component {
               <a href='#' className='dropdown-toggle' data-toggle='dropdown'>Top 10 <span className='caret'></span></a>
               <ul className='dropdown-menu'>
                 <li><Link to='/top'>Top Overall</Link></li>
-                <li className='dropdown-submenu'>
-                  <Link to='/top/amarr'>Amarr</Link>
-                  <ul className='dropdown-menu'>
-                    <li><Link to='/top/amarr/amarr'>Amarr</Link></li>
-                    <li><Link to='/top/amarr/ni-kunni'>Ni-Kunni</Link></li>
-                    <li><Link to='/top/amarr/khanid'>Khanid</Link></li>
-                  </ul>
-                </li>
+                <li><Link to='/top'>Toplane</Link></li>
+                <li><Link to='/top'>Midlane</Link></li>
+                <li><Link to='/top'>Jungle</Link></li>
+                <li><Link to='/top'>ADC</Link></li>
+                <li><Link to='/top'>Support</Link></li>
                 <li className='divider'></li>
-                <li><Link to='/shame'>Hall of Shame</Link></li>
+                <li><Link to='/shame'></Link></li>
               </ul>
             </li>
             <li className='dropdown'>
@@ -130,44 +127,40 @@ class Navbar extends React.Component {
               <ul className='dropdown-menu'>
                 <li><Link to='/All'>All</Link></li>
                 <li className='dropdown-submenu'>
-                  <Link to='/female/caldari'>Caldari</Link>
-                  <ul className='dropdown-menu'>
-                    <li><Link to='/female/caldari/achura'>Achura</Link></li>
-                    <li><Link to='/female/caldari/civire/'>Civire</Link></li>
-                    <li><Link to='/female/caldari/deteis'>Deteis</Link></li>
-                  </ul>
+                  <Link to='/champion/assasin'>Assassin</Link>
                 </li>
                 <li className='dropdown-submenu'>
-                  <Link to='/female/gallente'>ADC</Link>
-                  <ul className='dropdown-menu'>
-                    <li><Link to='/female/gallente/gallente'>Gallente</Link></li>
-                    <li><Link to='/female/gallente/intaki'>Intaki</Link></li>
-                    <li><Link to='/female/gallente/jin-mei'>Jin-Mei</Link></li>
-                  </ul>
+                  <Link to='/champion/fighter'>Fighter</Link>
                 </li>
                 <li className='dropdown-submenu'>
-                  <Link to='/female/minmatar'>Jungle</Link>
-                  <ul className='dropdown-menu'>
-                    <li><Link to='/female/minmatar/brutor'>Brutor</Link></li>
-                    <li><Link to='/female/minmatar/sebiestor'>Sebiestor</Link></li>
-                    <li><Link to='/female/minmatar/vherokior'>Vherokior</Link></li>
-                  </ul>
+                  <Link to='/champion/mage'>Mage</Link>
+                </li>
+                <li className='dropdown-submenu'>
+                  <Link to='/champion/adc'>Marksman</Link>
+                </li>
+                <li className='dropdown-submenu'>
+                  <Link to='/champion/support'>Support</Link>
+                </li>
+                <li className='dropdown-submenu'>
+                  <Link to='/champion/tank'>Tank</Link>
                 </li>
               </ul>
             </li>
             <li><Link to='/add'>Add</Link></li>
+            <li><NavLogin /></li>
             <li><div id="ckepop">
-              <div id="ckepop">
-              <span className="jiathis_txt">分享到：</span>
-              <a className="jiathis_button_weixin">微信</a> 
-              <a href="http://www.jiathis.com/share"  className="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
-              <a className="jiathis_counter_style"></a> </div> 
-              <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1" charSet="utf-8"></script>
+              <div className="jiathis_style">
+                <a className="jiathis_button_weixin"></a>
+                <a href="http://www.jiathis.com/share?uid=2080501" className="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+                <a className="jiathis_counter_style"></a>
+              </div>
+              <script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2080501" charSet="utf-8"></script>
+
               </div>
             </li>
           </ul>
         </div>
-        <NavLogin />
+        
       </nav>
     );
   }
