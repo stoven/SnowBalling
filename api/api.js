@@ -1,5 +1,7 @@
 import Constants from '../constants/ConfigConstants'
 var API_KEY = Constants.API_KEY;
+var LOGIN_URL = Constants.LOGIN_URL;
+var BASE_URL = Constants.BASE_URL;
 var xml2js = require('xml2js');
 var async = require('async');
 var request = require('request');
@@ -589,7 +591,7 @@ module.exports = {
      * Returns the total number of characters.
      */
     app.post('/api/loginUser', function(req, res, next) {
-      var url = 'http://localhost:8000/api/login';
+      var url = LOGIN_URL;
       //Lets try to make a HTTPS GET request to modulus.io's website.
       //All we did here to make HTTPS call is changed the `http` to `https` in URL.
       var characters;
@@ -597,7 +599,7 @@ module.exports = {
         uri: url,
         method: "POST",
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Access-Control-Allow-Origin': BASE_URL,
         json:true,
         body: {'username':req.body.username,'password':req.body.password}
       }, function(error, response, body) {

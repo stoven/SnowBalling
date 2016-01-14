@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import HomeStore from '../stores/HomeStore'
 import HomeActions from '../actions/HomeActions';
 import {first, without, findWhere} from 'underscore';
+import CurrentGame from './CurrentGame'
 
 class Home extends React.Component {
 
@@ -53,7 +54,7 @@ class Home extends React.Component {
   render() {
     var pageContent;
     if(this.state.game!=null && Object.keys(this.state.game).length>0){
-      pageContent = <div>{this.state.game}</div>
+      pageContent = <CurrentGame game={this.state.game} />
     }
     else{
       pageContent = <div><h3 className='text-center'>Search Summoner:</h3>
