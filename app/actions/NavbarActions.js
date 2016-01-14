@@ -23,7 +23,7 @@ class NavbarActions {
         let hit=0;
         let hitArray = [];
         $.each(Object.keys(data),function(index,value){
-          if(value.toLowerCase().indexOf(payload.searchQuery)!=-1){
+          if(value.toLowerCase().indexOf(payload.searchQuery.toLowerCase())!=-1){
             hit++;
             hitArray.push(value);
           }

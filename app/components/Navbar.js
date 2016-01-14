@@ -41,7 +41,11 @@ class Navbar extends React.Component {
     $.get(this.state.ChampionNames, function(result) {
       let ChampionsList = this.state.ChampionNames;
       $( "#inputSearchChampions" ).autocomplete({
-        source: ChampionsList
+        source: ChampionsList,
+        select: function(event, ui) {
+          event.target.value = ui.item.value;
+          NavbarActions.updateSearchQuery(event);//alert(ui.item.value+event.target.value);
+        }
       });
     }.bind(this));
     //var jiathis_config = {data_track_clickback:'true'};
@@ -62,7 +66,6 @@ class Navbar extends React.Component {
     event.preventDefault();
 
     let searchQuery = this.state.searchQuery.trim();
-
     if (searchQuery) {
       NavbarActions.findCharacter({
         searchQuery: searchQuery,
