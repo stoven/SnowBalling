@@ -14,23 +14,12 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({'game':null});
     HomeStore.listen(this.onChange);
-    //HomeActions.getCharacters();
   }
 
   componentWillUnmount() {
     HomeStore.unlisten(this.onChange);
-  }
-
-  onChange(state) {
-    this.setState(state);
-  }
-
-  handleClick(character) {
-    // var winner = character.id;
-    // var loser = first(without(this.state.characters, findWhere(this.state.characters, { id: winner }))).id;
-    // HomeActions.vote(winner, loser);
+    this.setState({'game':null});
   }
 
   onChange(state) {
@@ -39,9 +28,7 @@ class Home extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
     let searchQuery = this.state.searchQuery.trim();
-
     if (searchQuery) {
       HomeActions.getPlayerGame({
         searchQuery: searchQuery,
@@ -52,29 +39,25 @@ class Home extends React.Component {
   }
 
   render() {
-    var pageContent;
+    var gameContent;
     if(this.state.game!=null && Object.keys(this.state.game).length>0){
-      pageContent = <CurrentGame game={this.state.game} />
-    }
-    else{
-      pageContent = <div><h3 className='text-center'>Search Summoner:</h3>
-        <form ref='searchForm' className='navbar-form navbar-left animated' onSubmit={this.handleSubmit.bind(this)}>
-            <div className='input-group'>
-              <input id='inputSearchChampions' type='text' className='form-control' placeholder="Summoner's Name" value={this.state.searchQuery} onChange={HomeActions.updateSearchQuery} />
-              <span className='input-group-btn'>
-                <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
-              </span>
-            </div>
-          </form>
-          </div>
+      gameContent = <CurrentGame game={this.state.game} />
     }
     return (
       <div className='container'>
-      {pageContent}
+        {gameContent}
+        <h3 className='text-center'>Search Summoner:</h3>
+        <form ref='searchForm' className='home-form animated' onSubmit={this.handleSubmit.bind(this)}>
+          <div className='input-group col-xs-6 col-xs-offset-3'>
+            <input id='inputSearchChampions' type='text' className='form-control' placeholder="Summoner's Name" value={this.state.searchQuery} onChange={HomeActions.updateSearchQuery} />
+            <span className='input-group-btn'>
+              <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
+            </span>
+          </div>
+        </form>
       </div>
     );
     
   }
 }
-
 export default Home;

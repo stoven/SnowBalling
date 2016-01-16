@@ -19,10 +19,10 @@ export default (
     <Route path='/stats' component={Stats} />
     <Route path='/notfound' component={NotFound} />
     <Route path=':category' component={CharacterList}> 
-      <Route path=':race' component={CharacterList}>
+      {/*<Route path=':race' component={CharacterList}>
         <Route path=':bloodline' component={CharacterList} />
-      {/*turns payload to { category: 'female', race: 'gallente', bloodline: 'intaki' } */}
-      </Route>
+      turns payload to { category: 'female', race: 'gallente', bloodline: 'intaki' } 
+      </Route>*/}
     </Route>
   </Route>
 );

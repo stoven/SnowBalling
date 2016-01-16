@@ -21,7 +21,6 @@ class Navbar extends React.Component {
 
   componentDidMount() {
     NavbarStore.listen(this.onChange);
-    NavbarActions.getChampionCountAndNames();
 
     let socket = io.connect();
     socket.on('onlineUsers', (data) => {
@@ -37,17 +36,6 @@ class Navbar extends React.Component {
         NavbarActions.updateAjaxAnimation('fadeOut');
       }, 750);
     });
-
-    $.get(this.state.ChampionNames, function(result) {
-      let ChampionsList = this.state.ChampionNames;
-      $( "#inputSearchChampions" ).autocomplete({
-        source: ChampionsList,
-        select: function(event, ui) {
-          event.target.value = ui.item.value;
-          NavbarActions.updateSearchQuery(event);//alert(ui.item.value+event.target.value);
-        }
-      });
-    }.bind(this));
     //var jiathis_config = {data_track_clickback:'true'};
   }
 
@@ -62,18 +50,6 @@ class Navbar extends React.Component {
     this.setState(state);
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-
-    let searchQuery = this.state.searchQuery.trim();
-    if (searchQuery) {
-      NavbarActions.findCharacter({
-        searchQuery: searchQuery,
-        searchForm: this.refs.searchForm,
-        history: this.props.history
-      });
-    }
-  }
   render() {
     return (
       <nav className='navbar navbar-default navbar-static-top'>
@@ -101,14 +77,6 @@ class Navbar extends React.Component {
           </Link>
         </div>
         <div id='navbar' className='navbar-collapse collapse'>
-          <form ref='searchForm' className='navbar-form navbar-left animated' onSubmit={this.handleSubmit.bind(this)}>
-            <div className='input-group'>
-              <input id='inputSearchChampions' type='text' className='form-control' placeholder={this.state.totalCharacters + ' champions'} value={this.state.searchQuery} onChange={NavbarActions.updateSearchQuery} />
-              <span className='input-group-btn'>
-                <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
-              </span>
-            </div>
-          </form>
           <ul className='nav navbar-nav'>
             <li><Link to='/'>Home</Link></li>
             <li><Link to='/stats'>Stats</Link></li>
@@ -129,23 +97,23 @@ class Navbar extends React.Component {
               <a href='#' className='dropdown-toggle' data-toggle='dropdown'>Champions<span className='caret'></span></a>
               <ul className='dropdown-menu'>
                 <li><Link to='/All'>All</Link></li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/assasin'>Assassin</Link>
+                <li className=''>
+                  <Link to='/assasin'>Assassin</Link>
                 </li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/fighter'>Fighter</Link>
+                <li className=''>
+                  <Link to='/fighter'>Fighter</Link>
                 </li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/mage'>Mage</Link>
+                <li className=''>
+                  <Link to='/mage'>Mage</Link>
                 </li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/adc'>Marksman</Link>
+                <li className=''>
+                  <Link to='/adc'>Marksman</Link>
                 </li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/support'>Support</Link>
+                <li className=''>
+                  <Link to='/support'>Support</Link>
                 </li>
-                <li className='dropdown-submenu'>
-                  <Link to='/champion/tank'>Tank</Link>
+                <li className=''>
+                  <Link to='/tank'>Tank</Link>
                 </li>
               </ul>
             </li>

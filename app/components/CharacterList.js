@@ -15,6 +15,17 @@ class CharacterList extends React.Component {
   componentDidMount() {
     CharacterListStore.listen(this.onChange);
     CharacterListActions.getCharacters(this.props.params);
+
+    $.get(this.state.championNames, function(result) {
+      let ChampionsList = this.state.championNames;
+      $( "#inputSearchChampions" ).autocomplete({
+        source: ChampionsList,
+        select: function(event, ui) {
+          event.target.value = ui.item.value;
+          CharacterListActions.updateSearchQuery(event);//alert(ui.item.value+event.target.value);
+        }
+      });
+    }.bind(this));
   }
 
   componentWillUnmount() {
@@ -29,6 +40,19 @@ class CharacterList extends React.Component {
 
   onChange(state) {
     this.setState(state);
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+
+    let searchQuery = this.state.searchQuery.trim();
+    if (searchQuery) {
+      CharacterListActions.findCharacter({
+        searchQuery: searchQuery,
+        searchForm: this.refs.searchForm,
+        history: this.props.history
+      });
+    }
   }
 
   render() {
@@ -87,6 +111,14 @@ class CharacterList extends React.Component {
     return (
       <div className='container'>
       <h3 className='text-center'>View Champions</h3>
+          <form ref='searchForm' className='champions-search-form animated col-xs-3 col-xs-offset-9 clearfix' style={{'display':'block','margin-bottom':'15px'}} onSubmit={this.handleSubmit.bind(this)}>
+            <div className='input-group'>
+              <input id='inputSearchChampions' type='text' className='form-control' placeholder={this.state.totalCharacters + ' champions'} value={this.state.searchQuery} onChange={CharacterListActions.updateSearchQuery} />
+              <span className='input-group-btn'>
+                <button className='btn btn-default' onClick={this.handleSubmit.bind(this)}><span className='glyphicon glyphicon-search'></span></button>
+              </span>
+            </div>
+          </form>
         <div className='list-group'>
           {characterNodes}
         </div>
