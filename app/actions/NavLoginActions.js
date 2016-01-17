@@ -5,9 +5,9 @@ class NavLoginActions {
     this.generateActions(
       // 'loginUser',
       // 'logoutUser'
+      'checkUserLoginStatus'
     );
   }
-
   // login(username, password) {
   //   $.ajax({
   //       type: 'POST',

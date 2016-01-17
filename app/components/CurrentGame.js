@@ -13,11 +13,7 @@ class CurrentGame extends React.Component {
   componentWillUnmount() {
   }
 
-  onChange(state) {
-  }
 
-  onChange(state) {
-  }
 
   render() {
     var game = JSON.parse(this.props.game);

@@ -2,6 +2,7 @@ import Constants from '../constants/ConfigConstants'
 var API_KEY = Constants.API_KEY;
 var LOGIN_URL = Constants.LOGIN_URL;
 var BASE_URL = Constants.BASE_URL;
+var LOGIN_SERVICES_URL = Constants.LOGIN_SERVICES_URL;
 var xml2js = require('xml2js');
 var async = require('async');
 var request = require('request');
@@ -602,6 +603,93 @@ module.exports = {
         'Access-Control-Allow-Origin': BASE_URL,
         json:true,
         body: {'username':req.body.username,'password':req.body.password}
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        res.send(body);
+      });
+    });
+  },
+  registerUser: function(app){
+    app.post('/api/registerUser', function(req, res, next) {
+      var url = LOGIN_SERVICES_URL;
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url+'api/signup',
+        method: "POST",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': BASE_URL,
+        json:true,
+        body: {'username':req.body.username,'password':req.body.password,'name':req.body.username,'email':req.body.email}
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        res.send(body);
+      });
+    });
+  },
+  forgetPassword: function(app){
+    app.post('/api/forget', function(req, res, next) {
+      var url = LOGIN_SERVICES_URL;
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url+'api/login/forgot',
+        method: "POST",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': BASE_URL,
+        json:true,
+        body: {'email':req.body.email}
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        res.send(body);
+      });
+    });
+  },
+  resetPassword: function(app){
+    app.post('/api/reset', function(req, res, next) {
+      var url = LOGIN_SERVICES_URL;
+      //Lets try to make a HTTPS GET request to modulus.io's website.
+      //All we did here to make HTTPS call is changed the `http` to `https` in URL.
+      var characters;
+      request({
+        uri: url+'api/login/reset',
+        method: "POST",
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': BASE_URL,
+        json:true,
+        body: {'email':req.body.email,'key':req.body.key,'password':req.body.password}
       }, function(error, response, body) {
         //Check for error
         if (error) {

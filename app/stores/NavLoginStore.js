@@ -12,6 +12,9 @@ class NavLoginStore {
   // onLoginUser(data){
   //   this.LoginUser=data;
   // }
+  onCheckUserLoginStatus(user){
+    this.LoginUser=user;
+  }
 }
 
 export default alt.createStore(NavLoginStore);

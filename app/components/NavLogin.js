@@ -9,20 +9,25 @@ class NavLogin extends React.Component {
   constructor(props) {
     super(props);
     this.state = NavLoginStore.getState();
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
     let user = localStorage.getItem('LoginUser') ? JSON.parse(localStorage.getItem('LoginUser')) : {};
     this.setState({'LoginUser':user});
+    NavLoginStore.listen(this.onChange);
   }
 
   componentDidUpdate(){
-    
   }
 
   componentWillUnmount() {
+    NavLoginStore.unlisten(this.onChange);
   }
-
+  onChange(state) {
+    this.setState(state);
+  }
+  
   handleLoginRequest(event){
     event.preventDefault();
     this.setState({'showLogin':true});

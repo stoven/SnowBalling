@@ -52,6 +52,9 @@ api.reportCharacter(app);
 api.showCharacter(app);
 api.getPlayerGame(app);
 api.loginUser(app);
+api.registerUser(app);
+api.forgetPassword(app);
+api.resetPassword(app);
 /**
  * Socket.io stuff.
  */

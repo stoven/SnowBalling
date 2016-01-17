@@ -1,75 +1,93 @@
 import React from 'react';
 import {Link} from 'react-router';
-import LoginStore from '../stores/LoginStore';
+import ResetPasswordStore from '../stores/ResetPasswordStore';
 import NavLoginActions from '../actions/NavLoginActions';
 
-class Login extends React.Component {
+class ResetPassword extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = LoginStore.getState();
+    this.state = ResetPasswordStore.getState();
     this.onChange = this.onChange.bind(this);
   }
   componentDidUpdate(){
     //NavLoginStore.listen(this.cancel);
   }
   componentDidMount() {
+    ResetPasswordStore.listen(this.onChange);
+    let key = this.getParameterByName('key');
+    if(this.state.key==null&&key){
+      this.setState({'key':key});
+    }
+    let email = this.getParameterByName('email');
+    if(this.state.email==null&&email){
+      this.setState({'email':email});
+    }
     let user = localStorage.getItem('LoginUser') ? JSON.parse(localStorage.getItem('LoginUser')) : {};
     this.setState({'LoginUser':user});
-    LoginStore.listen(this.onChange);
   }
   componentWillUnmount() {
-    LoginStore.unlisten(this.onChange);
+    ResetPasswordStore.unlisten(this.onChange);
   }
 
-  updateUsername(e){
+  updateEmail(e){
     e.preventDefault();
-    this.setState({'username':e.target.value})
+    this.setState({'email':e.target.value})
   }
   updatePassword(e){
     e.preventDefault();
-    this.setState({'password':e.target.value})
+    this.setState({'password':e.target.value}) 
   }
   onChange(state) {
     this.setState(state);
   }
   // This will be called when the user clicks on the login button
-  login(e) {
+  submit(e) {
     e.preventDefault();
     // Here, we call an external AuthService. We’ll create it in the next step
     var self = this;
     $.ajax({
         type: 'POST',
-        url: '/api/loginUser',
+        url: '/api/reset',
         data: {
-          'username': this.state.username,
-          'password': this.state.password
+          'email': this.state.email,
+          'password':this.state.password,
+          'key':this.state.key
         }
       })
       .done((data) => {
-        localStorage.setItem('LoginUser', JSON.stringify(data));
-        NavLoginActions.checkUserLoginStatus(data);
-        self.setState({'LoginUser':data});
-        this.props.history.push('/');
+        self.setState({'resetSuccess':true});
       })
       .fail((jqXhr) => {
 
       });
+  }
+  getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
 
   render() {
     if (this.state.LoginUser!=null && Object.keys(this.state.LoginUser).length>0) {
       return (<div>{"You've already Logged In."}<Link to='/logout'>Log out</Link></div>);
     }
+    else if(this.state.resetSuccess){
+      return (<div>{"You've successfully reset your password."}<Link to='/login'>Log In</Link></div>);
+    }
+    else if(!this.state.key){
+      return (<div>The request is invalid.</div>);
+    }
     else{
       return (
         <div>
           <form role="form">
           <div className="form-group">
-            <input type="text" placeholder="Username" onChange={this.updateUsername.bind(this)} />
+            <input type="text" placeholder="Email" onChange={this.updateEmail.bind(this)} value={this.state.email} />
             <input type="password" placeholder="Password" onChange={this.updatePassword.bind(this)} />
           </div>
-          <button type="submit" onClick={this.login.bind(this)}>Login</button>
+          <button type="submit" onClick={this.submit.bind(this)}>Submit</button>
         </form>
       </div>
       );
@@ -79,4 +97,4 @@ class Login extends React.Component {
 
 // We’re using the mixin `LinkStateMixin` to have two-way databinding between our component and the HTML.
 //reactMixin(Login.prototype, React.addons.LinkedStateMixin);
-export default Login;
+export default ResetPassword;

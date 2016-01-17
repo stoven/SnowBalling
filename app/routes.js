@@ -7,17 +7,26 @@ import Character from './components/Character';
 import CharacterList from './components/CharacterList';
 import Stats from './components/Stats';
 import NotFound from './components/NotFound';
-import Login from './components/Login'
+import Login from './components/Login';
+import Logout from './components/Logout';
+import UserRegister from './components/UserRegister';
+import Forget from './components/Forget'
+import ResetPassword from './components/ResetPassword'
 
 export default (
   <Route component={App}>
     <Route path='/' component={Home} />
+    <Route path='/home' component={Home} />
     <Route path='/login' component={Login} />
+    <Route path='/logout' component={Logout} />
+    <Route path='/forget' component={Forget} />
+    <Route path='/reset' component={ResetPassword} />
     <Route path='/add' component={AddCharacter} />
     <Route path='/champion/:id' component={Character} />
     <Route path='/shame' component={CharacterList} />
     <Route path='/stats' component={Stats} />
     <Route path='/notfound' component={NotFound} />
+    <Route path='/register' component={UserRegister} />
     <Route path=':category' component={CharacterList}> 
       {/*<Route path=':race' component={CharacterList}>
         <Route path=':bloodline' component={CharacterList} />

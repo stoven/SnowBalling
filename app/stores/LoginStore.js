@@ -7,6 +7,7 @@ class LoginStore {
     this.bindActions(LoginActions)
     this.username = null;
     this.password = null;
+    this.LoginUser = null;
   }
 }
 

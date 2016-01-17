@@ -1,13 +1,13 @@
 import React from 'react';
 import {Link} from 'react-router';
-import LoginStore from '../stores/LoginStore';
+import ForgetStore from '../stores/ForgetStore';
 import NavLoginActions from '../actions/NavLoginActions';
 
-class Login extends React.Component {
+class Forget extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = LoginStore.getState();
+    this.state = ForgetStore.getState();
     this.onChange = this.onChange.bind(this);
   }
   componentDidUpdate(){
@@ -16,41 +16,33 @@ class Login extends React.Component {
   componentDidMount() {
     let user = localStorage.getItem('LoginUser') ? JSON.parse(localStorage.getItem('LoginUser')) : {};
     this.setState({'LoginUser':user});
-    LoginStore.listen(this.onChange);
+    ForgetStore.listen(this.onChange);
   }
   componentWillUnmount() {
-    LoginStore.unlisten(this.onChange);
+    ForgetStore.unlisten(this.onChange);
   }
 
-  updateUsername(e){
+  updateEmail(e){
     e.preventDefault();
-    this.setState({'username':e.target.value})
-  }
-  updatePassword(e){
-    e.preventDefault();
-    this.setState({'password':e.target.value})
+    this.setState({'email':e.target.value})
   }
   onChange(state) {
     this.setState(state);
   }
   // This will be called when the user clicks on the login button
-  login(e) {
+  submit(e) {
     e.preventDefault();
     // Here, we call an external AuthService. We’ll create it in the next step
     var self = this;
     $.ajax({
         type: 'POST',
-        url: '/api/loginUser',
+        url: '/api/forget',
         data: {
-          'username': this.state.username,
-          'password': this.state.password
+          'email': this.state.email
         }
       })
       .done((data) => {
-        localStorage.setItem('LoginUser', JSON.stringify(data));
-        NavLoginActions.checkUserLoginStatus(data);
-        self.setState({'LoginUser':data});
-        this.props.history.push('/');
+        self.setState({'recoveryEmailSent':true});
       })
       .fail((jqXhr) => {
 
@@ -61,15 +53,17 @@ class Login extends React.Component {
     if (this.state.LoginUser!=null && Object.keys(this.state.LoginUser).length>0) {
       return (<div>{"You've already Logged In."}<Link to='/logout'>Log out</Link></div>);
     }
+    else if(this.state.recoveryEmailSent){
+      return (<div>Please check your email to reset the password.</div>);
+    }
     else{
       return (
         <div>
           <form role="form">
           <div className="form-group">
-            <input type="text" placeholder="Username" onChange={this.updateUsername.bind(this)} />
-            <input type="password" placeholder="Password" onChange={this.updatePassword.bind(this)} />
+            <input type="text" placeholder="Email" onChange={this.updateEmail.bind(this)} />
           </div>
-          <button type="submit" onClick={this.login.bind(this)}>Login</button>
+          <button type="submit" onClick={this.submit.bind(this)}>Submit</button>
         </form>
       </div>
       );
@@ -79,4 +73,4 @@ class Login extends React.Component {
 
 // We’re using the mixin `LinkStateMixin` to have two-way databinding between our component and the HTML.
 //reactMixin(Login.prototype, React.addons.LinkedStateMixin);
-export default Login;
+export default Forget;
