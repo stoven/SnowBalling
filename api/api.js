@@ -8,6 +8,7 @@ var async = require('async');
 var request = require('request');
 var mongoose = require('mongoose');
 var Character = require('../models/character');
+var Summoner = require('../models/summoner');
 var config = require('../config');
 var _ = require('underscore');
 var request = require('request');
@@ -703,6 +704,126 @@ module.exports = {
 
         //All is good. Print the body
         res.send(body);
+      });
+    });
+  },
+  getSummoner: function(app){
+    app.get('/api/getSummoner',function(req,res,next){
+      var userId = req.query.userid;
+      Summoner.findOne({
+        userId: userId
+      }, function(err, summoner) {
+        if (err) return next(err);
+
+        if (summoner) {
+          res.send(summoner);
+        }
+        else{
+          return res.status(404).send({
+            message: 'user not found.'
+          });
+        }
+      });
+    });
+  },
+  setSummoner: function(app){
+    app.post('/api/setSummoner',function(req,res,next){
+      var userId = req.body.userid;
+      var summonerName = req.body.summonerName;
+      var name_url = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+summonerName+'?api_key='+API_KEY;
+      //var summonerId;
+      async.waterfall([
+        function(callback){
+          request({
+            uri: name_url,
+            method: "GET",
+            'Content-Type': 'application/json'
+          }, function(error, response, body) {
+            //Check for error
+            if (error) {
+              return console.log('Error:', error);
+            }
+
+            //Check for right status code
+            if (response.statusCode !== 200) {
+              return console.log('Invalid Status Code Returned:', response.statusCode);
+            }
+
+            //All is good. Print the body
+            let player = JSON.parse(body);
+            player = player[Object.keys(player)[0]];
+            var summonerId=player['id'];
+            callback(error,summonerId);
+            //res.send(player);
+          });
+        },
+        function(summonerId){
+          try {
+            Summoner.findOne({
+            userId: userId
+          }, function(err, summoner) {
+            if (err) return next(err);
+
+            if (summoner) {
+              summoner.summonerId = summonerId;
+              summoner.summonerName=summonerName;
+              summoner.save(function(err) {
+                if (err) return next(err);
+                res.send({
+                  message: summonerName + ' has been set successfully!'
+                });
+              });
+            }
+            else{
+              var summoner = new Summoner({
+                userId: userId,
+                summonerName: summonerName,
+                summonerId: summonerId
+              });
+
+              summoner.save(function(err) {
+                if (err) return next(err);
+                res.send({
+                  message: summonerName + ' has been set successfully!'
+                });
+              });
+            }
+          });
+            
+          } catch (e) {
+            res.status(404).send({
+              message: summonerName + ' is not a valid Summoner Name.'
+            });
+          }
+
+      }]);
+    });
+  },
+  getSummonerId: function(app){
+    app.get('/api/getSummonerId',function(req,res,next){
+    var playername = req.query.summonerName;
+      var name_url = 'https://na.api.pvp.net/api/lol/na/v1.4/summoner/by-name/'+playername+'?api_key='+API_KEY;
+      //var summonerId;
+      request({
+        uri: name_url,
+        method: "GET",
+        'Content-Type': 'application/json'
+      }, function(error, response, body) {
+        //Check for error
+        if (error) {
+          return console.log('Error:', error);
+        }
+
+        //Check for right status code
+        if (response.statusCode !== 200) {
+          return console.log('Invalid Status Code Returned:', response.statusCode);
+        }
+
+        //All is good. Print the body
+        let player = JSON.parse(body);
+        player = player[Object.keys(player)[0]];
+        var summonerId=player['id'];
+        res.send(summonerId);
       });
     });
   }

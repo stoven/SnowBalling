@@ -10,8 +10,9 @@ import NotFound from './components/NotFound';
 import Login from './components/Login';
 import Logout from './components/Logout';
 import UserRegister from './components/UserRegister';
-import Forget from './components/Forget'
-import ResetPassword from './components/ResetPassword'
+import Forget from './components/Forget';
+import ResetPassword from './components/ResetPassword';
+import Account from './components/Account'
 
 export default (
   <Route component={App}>
@@ -27,7 +28,9 @@ export default (
     <Route path='/stats' component={Stats} />
     <Route path='/notfound' component={NotFound} />
     <Route path='/register' component={UserRegister} />
+    <Route path='/account' component={Account} /> 
     <Route path=':category' component={CharacterList}> 
+
       {/*<Route path=':race' component={CharacterList}>
         <Route path=':bloodline' component={CharacterList} />
       turns payload to { category: 'female', race: 'gallente', bloodline: 'intaki' } 

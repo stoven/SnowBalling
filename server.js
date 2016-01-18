@@ -55,6 +55,8 @@ api.loginUser(app);
 api.registerUser(app);
 api.forgetPassword(app);
 api.resetPassword(app);
+api.getSummoner(app);
+api.setSummoner(app);
 /**
  * Socket.io stuff.
  */
