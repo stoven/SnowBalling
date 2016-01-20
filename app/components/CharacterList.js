@@ -111,7 +111,7 @@ class CharacterList extends React.Component {
     return (
       <div className='container'>
       <h3 className='text-center'>View Champions</h3>
-          <form ref='searchForm' className='champions-search-form animated col-xs-3 col-xs-offset-9 clearfix' style={{'display':'block','margin-bottom':'15px'}} onSubmit={this.handleSubmit.bind(this)}>
+          <form ref='searchForm' className='champions-search-form animated col-xs-3 col-xs-offset-9 clearfix' style={{'display':'block','marginBottom':'15px'}} onSubmit={this.handleSubmit.bind(this)}>
             <div className='input-group'>
               <input id='inputSearchChampions' type='text' className='form-control' placeholder={this.state.totalCharacters + ' champions'} value={this.state.searchQuery} onChange={CharacterListActions.updateSearchQuery} />
               <span className='input-group-btn'>

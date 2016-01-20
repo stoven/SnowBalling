@@ -34,28 +34,59 @@ class CurrentGame extends React.Component {
     });
     return (
       <div className='CurrentGame'>
-      <div className='TeamBlue'>{team1}</div>
-      <div className='TeamRed'>{team2}</div>
+        <Team participants={team1} />
+        <Team participants={team2} />
       <div style={{'display':'none'}}>{this.props.game}</div>
       </div>
     );
     
   }
 }
+class Team extends React.Component{
+  render(){
+    return(
+    <table className='TeamBlue'>
+      <thead><tr>
+        <th className='pIcon'></th>
+        <th className='pName'>Name</th>
+        <th className='champion'>Champion</th>
+        <th className='spell'>Spells</th>
+        <th className='masteries'>Masteries</th>
+        <th className='runes'>Runes</th>
+      </tr></thead>
+      <tbody>
+        {this.props.participants}
+      </tbody>
+    </table>
+    );
+  }
+}
 class Participant extends React.Component {
+  componentDidMount(){
+    let localData = localStorage.getItem('LOLChampions') ? JSON.parse(localStorage.getItem('LOLChampions')) : {};
+    if(Object.keys(localData).length==0){
+      $.ajax({ url: '/api/characters' })
+      .done((data) => {
+        localStorage.setItem('LOLChampions', JSON.stringify(data));
+        localData = JSON.parse(data);
+      })
+      .fail((jqXhr) => {
+        this.actions.getChampionsFail(jqXhr);
+      });
+    }
+    localData
+  }
   render(){
     var player = JSON.parse(this.props.participant);
     return (
-      <div className='Participant'>
-        <div className='pIcon'>{player.profileIconId}</div>
-        <div className='pName'>{player.summonerName}</div>
-        <div className='pId'>{player.summonerId}</div>
-        <div className='championId'>{player.championId}</div>
-        <div className='spell1'>{player.spell1Id}</div>
-        <div className='spell2'>{player.spell2Id}</div>
-        <div className='masteries'>{JSON.stringify(player.runes)}</div>
-        <div className='runes'>{JSON.stringify(player.masteries)}</div>
-      </div>  
+      <tr className='Participant'>
+        <td className='pIcon'><img height='30px' src={'http://ddragon.leagueoflegends.com/cdn/6.1.1/img/profileicon/'+player.profileIconId+'.png'} /></td>
+        <td className='pName'>{player.summonerName}</td>
+        <td className='champion'>{player.championId}</td>
+        <td className='spell'>{player.spell1Id}{player.spell2Id}</td>
+        <td className='masteries'>{JSON.stringify(player.runes)}</td>
+        <td className='runes'>{JSON.stringify(player.masteries)}</td>
+      </tr>  
     )
   }
 }

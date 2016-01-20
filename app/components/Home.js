@@ -40,8 +40,11 @@ class Home extends React.Component {
 
   render() {
     var gameContent;
-    if(this.state.game!=null && Object.keys(this.state.game).length>0){
+    if(this.state.game!=null && Object.keys(this.state.game).length>1){
       gameContent = <CurrentGame game={this.state.game} />
+    }
+    else if(this.state.game!=null ){
+      gameContent = <h3 className='text-center'>{this.state.game.message}</h3>
     }
     return (
       <div className='container'>

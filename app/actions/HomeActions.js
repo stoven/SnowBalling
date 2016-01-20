@@ -20,12 +20,9 @@ class HomeActions {
       .done(data => {
         //localStorage.setItem('LOLChampions', JSON.stringify(data));
         //console.log(data);
-        if(data.slice(0, 'error'.length) == 'error'){
-          this.actions.getPlayerGameFail(jqXhr.responseJSON.message);
-        }
-        else{
+        
           this.actions.getPlayerGameSuccess(data);
-        }
+        
       })
       .fail(jqXhr => {
         this.actions.getPlayerGameFail(jqXhr.responseJSON.message);

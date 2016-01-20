@@ -413,6 +413,8 @@ module.exports = {
 
         //Check for right status code
         if (response.statusCode !== 200) {
+          
+          callback(error,0);
           return console.log('Invalid Status Code Returned:', response.statusCode);
         }
 
@@ -425,29 +427,36 @@ module.exports = {
       });
     },
     function(summonerId){
-      
-      var game_url = 'https://na.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/NA1/'+summonerId+'?api_key='+API_KEY;
-      request({
-        uri: game_url,
-        method: "GET",
-        'Content-Type': 'application/json'
-      }, function(error, response, body) {
-        //Check for error
-        if (error) {
-          return console.log('Error:', error);
-        }
+      if(summonerId==0){
+        console.log("Summoner Not Found");
+        res.send({"message":"Summoner "+req.query.playername+" is not found"});
+      }
+      else{
+        var game_url = 'https://na.api.pvp.net/observer-mode/rest/consumer/getSpectatorGameInfo/NA1/'+summonerId+'?api_key='+API_KEY;
+        request({
+          uri: game_url,
+          method: "GET",
+          'Content-Type': 'application/json'
+        }, function(error, response, body) {
+          //Check for error
+          if (error) {
+            return console.log('Error:', error);
+          }
 
-        //Check for right status code
-        if (response.statusCode !== 200) {
-          console.log('Invalid Status Code Returned:', response.statusCode);
-          return 'error'+response.statusCode;
-        }
+          //Check for right status code
+          if (response.statusCode !== 200) {
+            
+            res.send({"message":"Player "+req.query.playername+" is not in a game"});
+            return console.log('Invalid Status Code Returned:', response.statusCode);
+          }
+          else{
+          //All is good. Print the body
+          //let game = JSON.parse(body);
 
-        //All is good. Print the body
-        //let game = JSON.parse(body);
-
-        res.send(body);
-      });
+          res.send(body);
+          }
+        });
+      }
     }]);
     });
   },

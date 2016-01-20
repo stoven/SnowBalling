@@ -37,7 +37,6 @@ class CharacterListActions {
   }
 
   getCharacters(payload) {
-    let url = '/api/characters';
     // let params = {
     //   race: payload.race,
     //   bloodline: payload.bloodline

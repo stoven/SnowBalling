@@ -57,6 +57,7 @@ api.forgetPassword(app);
 api.resetPassword(app);
 api.getSummoner(app);
 api.setSummoner(app);
+api.getSummonerId(app);
 /**
  * Socket.io stuff.
  */
